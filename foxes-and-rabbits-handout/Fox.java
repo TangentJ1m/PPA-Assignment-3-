@@ -173,7 +173,7 @@ public class Fox extends Animal
     private int breed()
     {
         int births;
-        if(canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY) {
+        if(canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY && this.isFemale()) {
             births = rand.nextInt(MAX_LITTER_SIZE) + 1;
         }
         else {

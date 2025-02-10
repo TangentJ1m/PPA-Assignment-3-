@@ -1,25 +1,34 @@
-
+import java.util.Random;
 /**
- * Common elements of foxes and rabbits.
+ * Common elements of animals 
  *
- * @author David J. Barnes and Michael Kölling
+ * @author Tanjim Islam
  * @version 7.0
  */
-public abstract class Animal
-{
-    // Whether the animal is alive or not.
-    private boolean alive;
-    // The animal's position.
-    private Location location;
 
-    /**
-     * Constructor for objects of class Animal.
-     * @param location The animal's location.
-     */
-    public Animal(Location location)
-    {
+
+public abstract class Animal {
+    
+    public enum Gender {
+    MALE, FEMALE;
+    }
+    private boolean alive;
+    private Location location;
+    protected static final double GENDER_PROBABILITY = 0.5;
+    private Gender gender;
+
+    public Animal(Location location) {
         this.alive = true;
         this.location = location;
+        this.gender = assignGender();
+    }
+
+    private Gender assignGender() {
+        return new Random().nextDouble() < GENDER_PROBABILITY ? Gender.MALE : Gender.FEMALE;
+    }
+
+    public Gender getGender() {
+        return gender;
     }
     
     /**
@@ -53,7 +62,7 @@ public abstract class Animal
      */
     public Location getLocation()
     {
-        return location;
+        return location; 
     }
     
     /**
@@ -64,4 +73,13 @@ public abstract class Animal
     {
         this.location = location;
     }
+    
+    protected boolean isMale() {
+        return gender == Gender.MALE;
+    }
+
+    protected boolean isFemale() {
+        return gender == Gender.FEMALE;
+    }
 }
+
