@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=Actor
+comment0.text=\n\ the\ interface\ to\ be\ extended\ by\ any\ class\ wishing\n\ to\ participate\ in\ the\ simulation\n\n\ @author\ Tanjim\ Islam\n\ @version\ 1.0.0\n
+comment1.params=currentField\ nextFieldState
+comment1.target=void\ act(Field,\ Field)
+comment1.text=\n\ @param\ currentField\ The\ current\ state\ of\ the\ field.\n\ @param\ nextFieldState\ The\ new\ state\ being\ built.\n
+comment2.params=
+comment2.target=boolean\ isActive()
+comment2.text=\n\ Is\ the\ actor\ still\ active?\n\ @return\ true\ if\ still\ active,\ false\ if\ not\n
+numComments=3

@@ -88,9 +88,9 @@ public class Simulator
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
 
-        List<Animal> animals = field.getAnimals();
-        for (Animal anAnimal : animals) {
-            anAnimal.act(field, nextFieldState);
+        List<Actor> Actors = field.getActors();
+        for (Actor anActor : Actors) { 
+            anActor.act(field, nextFieldState);
         }
         
         // Replace the old state with the new one.
@@ -122,12 +122,12 @@ public class Simulator
                 if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Fox fox = new Fox(true, location);
-                    field.placeAnimal(fox, location);
+                    field.placeActor(fox, location);
                 }
                 else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Rabbit rabbit = new Rabbit(true, location);
-                    field.placeAnimal(rabbit, location);
+                    field.placeActor(rabbit, location);
                 }
                 // else leave the location empty.
             }
@@ -135,7 +135,7 @@ public class Simulator
     }
 
     /**
-     * Report on the number of each type of animal in the field.
+     * Report on the number of each type of Actor in the field.
      */
     public void reportStats()
     {

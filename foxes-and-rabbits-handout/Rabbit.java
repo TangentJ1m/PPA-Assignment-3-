@@ -52,7 +52,7 @@ public class Rabbit extends Animal
     public void act(Field currentField, Field nextFieldState)
     {
         incrementAge();
-        if(isAlive()) {
+        if(isActive()) {
             List<Location> freeLocations = 
                 nextFieldState.getFreeAdjacentLocations(getLocation());
             if(!freeLocations.isEmpty()) {
@@ -62,7 +62,7 @@ public class Rabbit extends Animal
             if(! freeLocations.isEmpty()) {
                 Location nextLocation = freeLocations.get(0);
                 setLocation(nextLocation);
-                nextFieldState.placeAnimal(this, nextLocation);
+                nextFieldState.placeActor(this, nextLocation);
             }
             else {
                 // Overcrowding.
@@ -75,7 +75,7 @@ public class Rabbit extends Animal
     public String toString() {
         return "Rabbit{" +
                 "age=" + age +
-                ", alive=" + isAlive() +
+                ", alive=" + isActive() +
                 ", location=" + getLocation() +
                 '}';
     }
@@ -106,7 +106,7 @@ public class Rabbit extends Animal
             for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Rabbit young = new Rabbit(false, loc);
-                nextFieldState.placeAnimal(young, loc);
+                nextFieldState.placeActor(young, loc);
             }
         }
     }

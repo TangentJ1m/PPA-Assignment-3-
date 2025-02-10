@@ -7,8 +7,7 @@ import java.util.Random;
  */
 
 
-public abstract class Animal {
-    
+public abstract class Animal implements Actor{
     public enum Gender {
     MALE, FEMALE;
     }
@@ -42,7 +41,7 @@ public abstract class Animal {
      * Check whether the animal is alive or not.
      * @return true if the animal is still alive.
      */
-    public boolean isAlive()
+    public boolean isActive()
     {
         return alive;
     }

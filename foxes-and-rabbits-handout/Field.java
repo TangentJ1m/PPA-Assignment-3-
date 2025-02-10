@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * Represent a rectangular grid of field positions.
- * Each position is able to store a single animal/object.
+ * Each position is able to store a single Actor/object.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.0
@@ -14,10 +14,10 @@ public class Field
     
     // The dimensions of the field.
     private final int depth, width;
-    // Animals mapped by location.
-    private final Map<Location, Animal> field = new HashMap<>();
-    // The animals.
-    private final List<Animal> animals = new ArrayList<>();
+    // actors mapped by location.
+    private final Map<Location, Actor> field = new HashMap<>();
+    // The actors.
+    private final List<Actor> actors = new ArrayList<>();
 
     /**
      * Represent a field of the given dimensions.
@@ -31,29 +31,29 @@ public class Field
     }
 
     /**
-     * Place an animal at the given location.
-     * If there is already an animal at the location it will
+     * Place an Actor at the given location.
+     * If there is already an Actor at the location it will
      * be lost.
-     * @param anAnimal The animal to be placed.
-     * @param location Where to place the animal.
+     * @param anActor The Actor to be placed.
+     * @param location Where to place the Actor.
      */
-    public void placeAnimal(Animal anAnimal, Location location)
+    public void placeActor(Actor anActor, Location location)
     {
         assert location != null;
         Object other = field.get(location);
         if(other != null) {
-            animals.remove(other);
+            actors.remove(other);
         }
-        field.put(location, anAnimal);
-        animals.add(anAnimal);
+        field.put(location, anActor);
+        actors.add(anActor);
     }
     
     /**
-     * Return the animal at the given location, if any.
+     * Return the Actor at the given location, if any.
      * @param location Where in the field.
-     * @return The animal at the given location, or null if there is none.
+     * @return The Actor at the given location, or null if there is none.
      */
-    public Animal getAnimalAt(Location location)
+    public Actor getActorAt(Location location)
     {
         return field.get(location);
     }
@@ -68,11 +68,11 @@ public class Field
         List<Location> free = new LinkedList<>();
         List<Location> adjacent = getAdjacentLocations(location);
         for(Location next : adjacent) {
-            Animal anAnimal = field.get(next);
-            if(anAnimal == null) {
+            Actor anActor = field.get(next);
+            if(anActor == null) {
                 free.add(next);
             }
-            else if(!anAnimal.isAlive()) {
+            else if(!anActor.isActive()) {
                 free.add(next);
             }
         }
@@ -119,14 +119,14 @@ public class Field
     public void fieldStats()
     {
         int numFoxes = 0, numRabbits = 0;
-        for(Animal anAnimal : field.values()) {
-            if(anAnimal instanceof Fox fox) {
-                if(fox.isAlive()) {
+        for(Actor anActor : field.values()) {
+            if(anActor instanceof Fox fox) {
+                if(fox.isActive()) {
                     numFoxes++;
                 }
             }
-            else if(anAnimal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
+            else if(anActor instanceof Rabbit rabbit) {
+                if(rabbit.isActive()) {
                     numRabbits++;
                 }
             }
@@ -151,16 +151,16 @@ public class Field
     {
         boolean rabbitFound = false;
         boolean foxFound = false;
-        Iterator<Animal> it = animals.iterator();
+        Iterator<Actor> it = actors.iterator();
         while(it.hasNext() && ! (rabbitFound && foxFound)) {
-            Animal anAnimal = it.next();
-            if(anAnimal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
+            Actor anActor = it.next();
+            if(anActor instanceof Rabbit rabbit) {
+                if(rabbit.isActive()) {
                     rabbitFound = true;
                 }
             }
-            else if(anAnimal instanceof Fox fox) {
-                if(fox.isAlive()) {
+            else if(anActor instanceof Fox fox) {
+                if(fox.isActive()) {
                     foxFound = true;
                 }
             }
@@ -169,11 +169,11 @@ public class Field
     }
     
     /**
-     * Get the list of animals.
+     * Get the list of actors.
      */
-    public List<Animal> getAnimals()
+    public List<Actor> getActors()
     {
-        return animals;
+        return actors;
     }
 
     /**

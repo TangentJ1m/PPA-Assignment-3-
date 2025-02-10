@@ -63,7 +63,7 @@ public class Fox extends Animal
     {
         incrementAge();
         incrementHunger();
-        if(isAlive()) {
+        if(isActive()) {
             List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
             if(! freeLocations.isEmpty()) {
@@ -78,7 +78,7 @@ public class Fox extends Animal
             // See if it was possible to move.
             if(nextLocation != null) {
                 setLocation(nextLocation);
-                nextFieldState.placeAnimal(this, nextLocation);
+                nextFieldState.placeActor(this, nextLocation);
             }
             else {
                 // Overcrowding.
@@ -93,7 +93,7 @@ public class Fox extends Animal
     public String toString() {
         return "Fox{" +
                 "age=" + age +
-                ", alive=" + isAlive() +
+                ", alive=" + isActive() +
                 ", location=" + getLocation() +
                 ", foodLevel=" + foodLevel +
                 '}';
@@ -134,9 +134,9 @@ public class Fox extends Animal
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();
-            Animal animal = field.getAnimalAt(loc);
-            if(animal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
+            Actor actor = field.getActorAt(loc);
+            if(actor instanceof Rabbit rabbit) {
+                if(rabbit.isActive()) {
                     rabbit.setDead();
                     foodLevel = RABBIT_FOOD_VALUE;
                     foodLocation = loc;
@@ -160,7 +160,7 @@ public class Fox extends Animal
             for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Fox young = new Fox(false, loc);
-                nextFieldState.placeAnimal(young, loc);
+                nextFieldState.placeActor(young, loc);
             }
         }
     }
