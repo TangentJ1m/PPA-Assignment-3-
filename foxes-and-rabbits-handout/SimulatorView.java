@@ -21,7 +21,7 @@ public class SimulatorView extends JFrame
     // Color used for objects that have no defined color.
     private static final Color UNKNOWN_COLOR = Color.gray;
 
-    private final String STEP_PREFIX = "Step: ";
+    private final String STEP_PREFIX = "Time: ";
     private final String POPULATION_PREFIX = "Population: ";
     private final JLabel stepLabel;
     private final JLabel population;
@@ -41,10 +41,13 @@ public class SimulatorView extends JFrame
     {
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
-        setColor(Rabbit.class, Color.orange);
-        setColor(Fox.class, Color.blue);
+        setColor(Zebra.class, Color.orange);
+        setColor(Hyena.class, Color.blue);
+        setColor(Giraffe.class, Color.red);
+        setColor(Hunter.class, Color.black);
+        setColor(Lion.class, Color.green);
 
-        setTitle("Fox and Rabbit Simulation");
+        setTitle("Savannah Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
         
@@ -90,23 +93,22 @@ public class SimulatorView extends JFrame
      * @param step Which iteration step it is.
      * @param field The field whose status is to be displayed.
      */
-    public void showStatus(int step, Field field)
+    public void showStatus(String time, Field field)
     {
         if(!isVisible()) {
             setVisible(true);
         }
-            
-        stepLabel.setText(STEP_PREFIX + step);
+        stepLabel.setText(STEP_PREFIX + time);
         stats.reset();
         
         fieldView.preparePaint();
 
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                Object animal = field.getActorAt(new Location(row, col));
-                if(animal != null) {
-                    stats.incrementCount(animal.getClass());
-                    fieldView.drawMark(col, row, getColor(animal.getClass()));
+                Object actor = field.getActorAt(new Location(row, col));
+                if(actor != null) {
+                    stats.incrementCount(actor.getClass());
+                    fieldView.drawMark(col, row, getColor(actor.getClass()));
                 }
                 else {
                     fieldView.drawMark(col, row, EMPTY_COLOR);

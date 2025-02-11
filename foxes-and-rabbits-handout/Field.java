@@ -66,7 +66,7 @@ public class Field
     public List<Location> getFreeAdjacentLocations(Location location)
     {
         List<Location> free = new LinkedList<>();
-        List<Location> adjacent = getAdjacentLocations(location);
+        List<Location> adjacent = getAdjacentLocations(location, 1);
         for(Location next : adjacent) {
             Actor anActor = field.get(next);
             if(anActor == null) {
@@ -84,9 +84,10 @@ public class Field
      * The list will not include the location itself.
      * All locations will lie within the grid.
      * @param location The location from which to generate adjacencies.
+     * @param range the range of area we search around location
      * @return A list of locations adjacent to that given.
      */
-    public List<Location> getAdjacentLocations(Location location)
+    public List<Location> getAdjacentLocations(Location location, int range)
     {
         // The list of locations to be returned.
         List<Location> locations = new ArrayList<>();
@@ -114,25 +115,25 @@ public class Field
     }
 
     /**
-     * Print out the number of foxes and rabbits in the field.
+     * Print out the number of Hyenaes and Zebras in the field.
      */
     public void fieldStats()
     {
-        int numFoxes = 0, numRabbits = 0;
+        int numHyenaes = 0, numZebras = 0;
         for(Actor anActor : field.values()) {
-            if(anActor instanceof Fox fox) {
-                if(fox.isActive()) {
-                    numFoxes++;
+            if(anActor instanceof Hyena Hyena) {
+                if(Hyena.isActive()) {
+                    numHyenaes++;
                 }
             }
-            else if(anActor instanceof Rabbit rabbit) {
-                if(rabbit.isActive()) {
-                    numRabbits++;
+            else if(anActor instanceof Zebra Zebra) {
+                if(Zebra.isActive()) {
+                    numZebras++;
                 }
             }
         }
-        System.out.println("Rabbits: " + numRabbits +
-                           " Foxes: " + numFoxes);
+        System.out.println("Zebras: " + numZebras +
+                           " Hyenaes: " + numHyenaes);
     }
 
     /**
@@ -144,28 +145,28 @@ public class Field
     }
 
     /**
-     * Return whether there is at least one rabbit and one fox in the field.
-     * @return true if there is at least one rabbit and one fox in the field.
+     * Return whether there is at least one Zebra and one Hyena in the field.
+     * @return true if there is at least one Zebra and one Hyena in the field.
      */
     public boolean isViable()
     {
-        boolean rabbitFound = false;
-        boolean foxFound = false;
+        boolean ZebraFound = false;
+        boolean HyenaFound = false;
         Iterator<Actor> it = actors.iterator();
-        while(it.hasNext() && ! (rabbitFound && foxFound)) {
+        while(it.hasNext() && ! (ZebraFound && HyenaFound)) {
             Actor anActor = it.next();
-            if(anActor instanceof Rabbit rabbit) {
-                if(rabbit.isActive()) {
-                    rabbitFound = true;
+            if(anActor instanceof Zebra Zebra) {
+                if(Zebra.isActive()) {
+                    ZebraFound = true;
                 }
             }
-            else if(anActor instanceof Fox fox) {
-                if(fox.isActive()) {
-                    foxFound = true;
+            else if(anActor instanceof Hyena Hyena) {
+                if(Hyena.isActive()) {
+                    HyenaFound = true;
                 }
             }
         }
-        return rabbitFound && foxFound;
+        return ZebraFound && HyenaFound;
     }
     
     /**

@@ -12,4 +12,6 @@ comment3.target=void\ tearDown()
 comment3.text=\n\ Tears\ down\ the\ test\ fixture.\n\n\ Called\ after\ every\ test\ case\ method.\n
 comment4.params=
 comment4.target=void\ TestSimulation()
-numComments=5
+comment5.params=
+comment5.target=void\ TestLongSimulation()
+numComments=6

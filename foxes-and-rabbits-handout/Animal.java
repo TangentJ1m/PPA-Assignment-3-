@@ -1,4 +1,4 @@
-import java.util.Random;
+import java.util.*;
 /**
  * Common elements of animals 
  *
@@ -7,21 +7,25 @@ import java.util.Random;
  */
 
 
-public abstract class Animal implements Actor{
-    public enum Gender {
-    MALE, FEMALE;
-    }
-    private boolean alive;
-    private Location location;
+public abstract class Animal extends Actor{
     protected static final double GENDER_PROBABILITY = 0.5;
     private Gender gender;
+    private static final Random rand = Randomizer.getRandom();
+    protected int age;
 
-    public Animal(Location location) {
-        this.alive = true;
-        this.location = location;
+    public Animal(boolean randomAge, Location location) {
+        super(location);
         this.gender = assignGender();
+        age = 0;
+        if(randomAge) {
+            age = rand.nextInt(getMaxAge());
+        }
     }
-
+    
+    /**
+     * Provides equal chance to the animal being male or female
+     * @return Gender assigned to animal 
+     */
     private Gender assignGender() {
         return new Random().nextDouble() < GENDER_PROBABILITY ? Gender.MALE : Gender.FEMALE;
     }
@@ -29,29 +33,13 @@ public abstract class Animal implements Actor{
     public Gender getGender() {
         return gender;
     }
-    
-    /**
-     * Act.
-     * @param currentField The current state of the field.
-     * @param nextFieldState The new state being built.
-     */
-    abstract public void act(Field currentField, Field nextFieldState);
-    
-    /**
-     * Check whether the animal is alive or not.
-     * @return true if the animal is still alive.
-     */
-    public boolean isActive()
-    {
-        return alive;
-    }
 
     /**
-     * Indicate that the animal is no longer alive.
+     * Indicate that the animal is no longer active.
      */
     protected void setDead()
     {
-        alive = false;
+        setActive(false);
         location = null;
     }
     
@@ -64,14 +52,6 @@ public abstract class Animal implements Actor{
         return location; 
     }
     
-    /**
-     * Set the animal's location.
-     * @param location The new location.
-     */
-    protected void setLocation(Location location)
-    {
-        this.location = location;
-    }
     
     protected boolean isMale() {
         return gender == Gender.MALE;
@@ -80,5 +60,36 @@ public abstract class Animal implements Actor{
     protected boolean isFemale() {
         return gender == Gender.FEMALE;
     }
+    
+    protected abstract int getMaxAge();
+    
+    /**
+     * Increase the age.
+     * This could result in the Zebra's death.
+     */
+    protected void incrementAge()
+    {
+        age++;
+        if(age > getMaxAge()) {
+            setDead();
+        }
+    }
+    
+    protected boolean isMaleNearby(Field field){
+        List<Location> adjacent = field.getAdjacentLocations(getLocation(),1);
+        Iterator<Location> it = adjacent.iterator();
+        while(it.hasNext()) {
+            Location loc = it.next();
+            Actor actor = field.getActorAt(loc);
+            // Check this is the same type of animal
+            if(actor.getClass() == this.getClass()) {
+                Animal animal = (Animal) actor;
+                if (animal.isActive() && animal.isMale()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
-
+    

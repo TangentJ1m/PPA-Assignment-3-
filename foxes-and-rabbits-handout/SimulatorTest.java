@@ -46,5 +46,13 @@ public class SimulatorTest
         Simulator simulato1 = new Simulator();
         simulato1.simulateOneStep();
     }
+
+    @Test
+    public void TestLongSimulation()
+    {
+        Simulator simulato1 = new Simulator();
+        simulato1.runLongSimulation();
+    }
 }
+
 

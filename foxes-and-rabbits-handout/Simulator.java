@@ -1,8 +1,9 @@
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * A simple predator-prey simulator, based on a rectangular field containing 
- * rabbits and foxes.
+ * Zebras and Hyenaes.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
@@ -14,10 +15,17 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
-    // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
-    // The probability that a rabbit will be created in any given position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
+    // The probability that a Hyena will be created in any given grid position.
+    private static final double Hyena_CREATION_PROBABILITY = 0.02;
+    // The probability that a Zebra will be created in any given position.
+    private static final double Zebra_CREATION_PROBABILITY = 0.08;
+    // The probability that a Zebra will be created in any given position.
+    private static final double Giraffe_CREATION_PROBABILITY = 0.06;
+    // The probability that a Zebra will be created in any given position.
+    private static final double Hunter_CREATION_PROBABILITY = 0.01;
+    // The probability that a Zebra will be created in any given position.
+    private static final double Lion_CREATION_PROBABILITY = 0.02;
+    
 
     // The current state of the field.
     private Field field;
@@ -60,7 +68,7 @@ public class Simulator
      */
     public void runLongSimulation()
     {
-        simulate(700);
+        simulate(1200);
     }
     
     /**
@@ -73,13 +81,13 @@ public class Simulator
         reportStats();
         for(int n = 1; n <= numSteps && field.isViable(); n++) {
             simulateOneStep();
-            delay(50);         // adjust this to change execution speed
+            //delay(50);         // adjust this to change execution speed
         }
     }
     
     /**
      * Run the simulation from its current state for a single step.
-     * Iterate over the whole field updating the state of each fox and rabbit.
+     * Iterate over the whole field updating the state of each Hyena and Zebra.
      */
     public void simulateOneStep()
     {
@@ -97,7 +105,7 @@ public class Simulator
         field = nextFieldState;
 
         reportStats();
-        view.showStatus(step, field);
+        view.showStatus(calculateTime(step), field);
     }
         
     /**
@@ -107,33 +115,73 @@ public class Simulator
     {
         step = 0;
         populate();
-        view.showStatus(step, field);
+        view.showStatus(calculateTime(step), field);
     }
     
     /**
-     * Randomly populate the field with foxes and rabbits.
-     */
-    private void populate()
+    * Randomly populate the field with Hyenaes and Zebras.
+    */
+   private void populate() {
+        Random rand = Randomizer.getRandom();
+        field.clear();
+    
+        // Define a map of probabilities and actor creators
+        Map<Double, Function<Location, Actor>> actorMap = new HashMap<>();
+        actorMap.put(Hyena_CREATION_PROBABILITY, loc -> new Hyena(true, loc));
+        actorMap.put(Zebra_CREATION_PROBABILITY, loc -> new Zebra(true, loc));
+        actorMap.put(Giraffe_CREATION_PROBABILITY, loc -> new Giraffe(true, loc));
+        actorMap.put(Lion_CREATION_PROBABILITY, loc -> new Lion(true, loc));
+        actorMap.put(Hunter_CREATION_PROBABILITY, loc -> new Hunter(loc));
+    
+        for (int row = 0; row < field.getDepth(); row++) {
+            for (int col = 0; col < field.getWidth(); col++) {
+                Location location = new Location(row, col);
+                for (Map.Entry<Double, Function<Location, Actor>> entry : actorMap.entrySet()) {
+                    if (rand.nextDouble() <= entry.getKey()) {
+                        field.placeActor(entry.getValue().apply(location), location);
+                        break; // Ensure only one actor is placed per location
+                    }
+                }
+            }
+        }
+    }
+/*    
+private void populate()
     {
         Random rand = Randomizer.getRandom();
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
+                if(rand.nextDouble() <= Hyena_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Fox fox = new Fox(true, location);
-                    field.placeActor(fox, location);
+                    Hyena hyena = new Hyena(true, location);
+                    field.placeActor(hyena, location);
                 }
-                else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
+                else if(rand.nextDouble() <= Zebra_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, location);
-                    field.placeActor(rabbit, location);
+                    Zebra zebra = new Zebra(true, location);
+                    field.placeActor(zebra, location);
+                }
+                else if(rand.nextDouble() <= Giraffe_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Giraffe giraffe = new Giraffe(true, location);
+                    field.placeActor(giraffe, location);
+                }
+                else if(rand.nextDouble() <= Lion_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Lion lion = new Lion(true, location);
+                    field.placeActor(lion, location);
+                }
+                else if(rand.nextDouble() <= Hunter_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Hunter hunter = new Hunter(location);
+                    field.placeActor(hunter, location);
                 }
                 // else leave the location empty.
             }
         }
     }
-
+*/
     /**
      * Report on the number of each type of Actor in the field.
      */
@@ -141,7 +189,7 @@ public class Simulator
     {
         //System.out.print("Step: " + step + " ");
         field.fieldStats();
-    }
+    } 
     
     /**
      * Pause for a given time.
@@ -155,5 +203,18 @@ public class Simulator
         catch(InterruptedException e) {
             // ignore
         }
+    }
+    
+    /**
+     * Calculates the time based on the given number of steps.
+     * Assumes each step represents one minute.
+     *
+     * @param step The number of steps (minutes).
+     * @return The formatted time in HH:mm format.
+     */
+    private String calculateTime(int step) {
+        int hours = (step / 60) % 24;
+        int minutes = step % 60;
+        return String.format("%02d:%02d", hours, minutes);
     }
 }
