@@ -4,14 +4,14 @@ import java.util.Random;
 
 /**
  * A simple model of a Hyena.
- * Hyenaes age, move, eat Zebras, and die.
+ * Hyenas age, move, eat Zebras, and die.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
 public class Hyena extends Animal
 {
-    // Characteristics shared by all Hyenaes (class variables).
+    // Characteristics shared by all Hyenas (class variables).
     // The age at which a Hyena can start to breed.
     private static final int BREEDING_AGE = 15;
     // The age to which a Hyena can live.
@@ -26,13 +26,12 @@ public class Hyena extends Animal
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
-    // Individual characteristics (instance fields).
 
     // The Hyena's food level, which is increased by eating Zebras.
     private int foodLevel;
 
     /**
-     * Create a Hyena. A Hyena can be created as a new born (age zero
+     * Create a Hyena. A Hyena can be created as a newborn (age zero
      * and not hungry) or with a random age and food level.
      * 
      * @param randomAge If true, the Hyena will have random age and hunger level.
@@ -134,7 +133,7 @@ public class Hyena extends Animal
      */
     private void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
-        // New Hyenaes are born into adjacent locations.
+        // New Hyenas are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
         if(births > 0) {
@@ -169,10 +168,6 @@ public class Hyena extends Animal
     private boolean canBreed(Field field)
     {
         return age >= BREEDING_AGE && isFemale() && isMaleNearby(field);
-    }
-    
-    protected boolean isMaleNearby(Field field){
-        return true;
     }
     
     @Override

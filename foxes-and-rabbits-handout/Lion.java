@@ -4,14 +4,14 @@ import java.util.Random;
 
 /**
  * A simple model of a Lion.
- * Liones age, move, eat Zebras, and die.
+ * Lions age, move, eat Zebras, and die.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
 public class Lion extends Animal
 {
-    // Characteristics shared by all Liones (class variables).
+    // Characteristics shared by all Lions (class variables).
     // The age at which a Lion can start to breed.
     private static final int BREEDING_AGE = 15;
     // The age to which a Lion can live.
@@ -32,7 +32,7 @@ public class Lion extends Animal
     private int foodLevel;
 
     /**
-     * Create a Lion. A Lion can be created as a new born (age zero
+     * Create a Lion. A Lion can be created as a newborn (age zero
      * and not hungry) or with a random age and food level.
      * 
      * @param randomAge If true, the Lion will have random age and hunger level.
@@ -134,7 +134,7 @@ public class Lion extends Animal
      */
     private void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
-        // New Liones are born into adjacent locations.
+        // New Lions are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
         if(births > 0) {
@@ -169,10 +169,6 @@ public class Lion extends Animal
     private boolean canBreed(Field field)
     {
         return age >= BREEDING_AGE && isFemale() && isMaleNearby(field);
-    }
-    
-    protected boolean isMaleNearby(Field field){
-        return true;
     }
     
     @Override

@@ -1,9 +1,9 @@
 
 /**
- * Enumeration class Gender - write a description of the enum class here
+ * The gender enum stores the gender of an Animal and takes two values, male and female
  *
- * @author (your name here)
- * @version (version number or date here)
+ * @author Tanjim Islam and Keiran Matthews
+ * @version 1.0.0
  */
 public enum Gender
 {

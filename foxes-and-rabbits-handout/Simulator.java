@@ -3,9 +3,9 @@ import java.util.function.Function;
 
 /**
  * A simple predator-prey simulator, based on a rectangular field containing 
- * Zebras and Hyenaes.
+ * Hyenas, Zebras, Giraffes, Hunters and Lions.
  * 
- * @author David J. Barnes and Michael Kölling
+ * @author David J. Barnes, Michael Kölling, Tanjim Islam and Keiran Matthews
  * @version 7.1
  */
 public class Simulator
@@ -15,17 +15,13 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
-    // The probability that a Hyena will be created in any given grid position.
-    private static final double Hyena_CREATION_PROBABILITY = 0.02;
-    // The probability that a Zebra will be created in any given position.
-    private static final double Zebra_CREATION_PROBABILITY = 0.08;
-    // The probability that a Zebra will be created in any given position.
-    private static final double Giraffe_CREATION_PROBABILITY = 0.06;
-    // The probability that a Zebra will be created in any given position.
-    private static final double Hunter_CREATION_PROBABILITY = 0.01;
-    // The probability that a Zebra will be created in any given position.
-    private static final double Lion_CREATION_PROBABILITY = 0.02;
-    
+    // The probability that each actor will be created in any given grid position.
+    private static final double HYENA_CREATION_PROBABILITY = 0.02;
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.08;
+    private static final double GIRAFFE_CREATION_PROBABILITY = 0.06;
+    private static final double HUNTER_CREATION_PROBABILITY = 0.01;
+    private static final double LION_CREATION_PROBABILITY = 0.02;
+
 
     // The current state of the field.
     private Field field;
@@ -61,7 +57,17 @@ public class Simulator
 
         reset();
     }
-    
+
+
+    /**
+     * Main method to allow this class to be executed
+     * @param args unused
+     */
+    public static void main(String[] args) {
+        Simulator sim = new Simulator();
+        sim.runLongSimulation();
+    }
+
     /**
      * Run the simulation from its current state for a reasonably long 
      * period (4000 steps).
@@ -87,7 +93,7 @@ public class Simulator
     
     /**
      * Run the simulation from its current state for a single step.
-     * Iterate over the whole field updating the state of each Hyena and Zebra.
+     * Iterate over the whole field updating the state of each Actor.
      */
     public void simulateOneStep()
     {
@@ -119,69 +125,38 @@ public class Simulator
     }
     
     /**
-    * Randomly populate the field with Hyenaes and Zebras.
+    * Randomly populate the field with Actors.
     */
    private void populate() {
         Random rand = Randomizer.getRandom();
         field.clear();
-    
-        // Define a map of probabilities and actor creators
-        Map<Double, Function<Location, Actor>> actorMap = new HashMap<>();
-        actorMap.put(Hyena_CREATION_PROBABILITY, loc -> new Hyena(true, loc));
-        actorMap.put(Zebra_CREATION_PROBABILITY, loc -> new Zebra(true, loc));
-        actorMap.put(Giraffe_CREATION_PROBABILITY, loc -> new Giraffe(true, loc));
-        actorMap.put(Lion_CREATION_PROBABILITY, loc -> new Lion(true, loc));
-        actorMap.put(Hunter_CREATION_PROBABILITY, loc -> new Hunter(loc));
-    
+
         for (int row = 0; row < field.getDepth(); row++) {
             for (int col = 0; col < field.getWidth(); col++) {
                 Location location = new Location(row, col);
-                for (Map.Entry<Double, Function<Location, Actor>> entry : actorMap.entrySet()) {
-                    if (rand.nextDouble() <= entry.getKey()) {
-                        field.placeActor(entry.getValue().apply(location), location);
-                        break; // Ensure only one actor is placed per location
-                    }
+                Actor actor = null;
+                if (rand.nextDouble() < HYENA_CREATION_PROBABILITY) {
+                    actor = new Hyena(true, location);
+                }
+                else if (rand.nextDouble() < ZEBRA_CREATION_PROBABILITY) {
+                    actor = new Zebra(true, location);
+                }
+                else if (rand.nextDouble() < GIRAFFE_CREATION_PROBABILITY) {
+                    actor = new Giraffe(true, location);
+                }
+                else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
+                    actor = new Lion(true, location);
+                }
+                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
+                    actor = new Hyena(true, location);
+                }
+                if (actor != null) {
+                    field.placeActor(actor, location);
                 }
             }
         }
     }
-/*    
-private void populate()
-    {
-        Random rand = Randomizer.getRandom();
-        field.clear();
-        for(int row = 0; row < field.getDepth(); row++) {
-            for(int col = 0; col < field.getWidth(); col++) {
-                if(rand.nextDouble() <= Hyena_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Hyena hyena = new Hyena(true, location);
-                    field.placeActor(hyena, location);
-                }
-                else if(rand.nextDouble() <= Zebra_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Zebra zebra = new Zebra(true, location);
-                    field.placeActor(zebra, location);
-                }
-                else if(rand.nextDouble() <= Giraffe_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Giraffe giraffe = new Giraffe(true, location);
-                    field.placeActor(giraffe, location);
-                }
-                else if(rand.nextDouble() <= Lion_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Lion lion = new Lion(true, location);
-                    field.placeActor(lion, location);
-                }
-                else if(rand.nextDouble() <= Hunter_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Hunter hunter = new Hunter(location);
-                    field.placeActor(hunter, location);
-                }
-                // else leave the location empty.
-            }
-        }
-    }
-*/
+
     /**
      * Report on the number of each type of Actor in the field.
      */

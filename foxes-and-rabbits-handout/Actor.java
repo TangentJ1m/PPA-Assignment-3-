@@ -10,7 +10,11 @@ public abstract class Actor
 {
     private boolean active;
     protected Location location;
-    
+
+    /**
+     * Constructor for a new Actor, sets the new actor to be active by default
+     * @param location the location to create the actor
+     */
     public Actor(Location location) {
         this.active = true;
         this.location = location;
@@ -20,11 +24,10 @@ public abstract class Actor
      * @param currentField The current state of the field.
      * @param nextFieldState The new state being built.
      */
-    public abstract void act(Field currentField, Field nextFieldState);//Event Class needed
+    public abstract void act(Field currentField, Field nextFieldState);
     
     /**
-     * Check whether the animal is alive or not.
-     * @return true if the animal is still alive.
+     * @return true if the Actor is still active
      */
     public boolean isActive()
     {
@@ -32,8 +35,7 @@ public abstract class Actor
     }
     
     /**
-     * Return the animal's location.
-     * @return The animal's location.
+     * @return The Actor's location
      */
     public Location getLocation()
     {
@@ -41,14 +43,18 @@ public abstract class Actor
     }
     
     /**
-     * Set the animal's location.
-     * @param location The new location.
+     * Set the Actor's location
+     * @param location The new location
      */
     protected void setLocation(Location location)
     {
         this.location = location;
     }
-    
+
+    /**
+     * Set whether this Actor is active
+     * @param active the new value for active
+     */
     protected void setActive(boolean active) {
         this.active = active;
     }

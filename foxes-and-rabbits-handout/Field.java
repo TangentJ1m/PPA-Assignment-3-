@@ -115,25 +115,25 @@ public class Field
     }
 
     /**
-     * Print out the number of Hyenaes and Zebras in the field.
+     * Print out the number of Hyenas and Zebras in the field.
      */
     public void fieldStats()
     {
         int numHyenaes = 0, numZebras = 0;
         for(Actor anActor : field.values()) {
-            if(anActor instanceof Hyena Hyena) {
-                if(Hyena.isActive()) {
+            if(anActor instanceof Hyena hyena) {
+                if(hyena.isActive()) {
                     numHyenaes++;
                 }
             }
-            else if(anActor instanceof Zebra Zebra) {
-                if(Zebra.isActive()) {
+            else if(anActor instanceof Zebra zebra) {
+                if(zebra.isActive()) {
                     numZebras++;
                 }
             }
         }
         System.out.println("Zebras: " + numZebras +
-                           " Hyenaes: " + numHyenaes);
+                           " Hyenas: " + numHyenaes);
     }
 
     /**

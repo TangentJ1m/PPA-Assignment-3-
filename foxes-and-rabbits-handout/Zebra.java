@@ -22,10 +22,9 @@ public class Zebra extends Animal
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
-    // Individual characteristics (instance fields).
     /**
      * Create a new Zebra. A Zebra may be created with age
-     * zero (a new born) or with a random age.
+     * zero (a newborn) or with a random age.
      * 
      * @param randomAge If true, the Zebra will have a random age.
      * @param location The location within the field.
@@ -72,8 +71,8 @@ public class Zebra extends Animal
                 '}';
     }
     
-    /**)
-     * Check whether or not this Zebra is to give birth at this step.
+    /**
+     * Check whether this Zebra is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */

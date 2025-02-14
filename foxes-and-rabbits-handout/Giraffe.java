@@ -22,10 +22,9 @@ public class Giraffe extends Animal
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
-    // Individual characteristics (instance fields).
     /**
      * Create a new Giraffe. A Giraffe may be created with age
-     * zero (a new born) or with a random age.
+     * zero (a newborn) or with a random age.
      * 
      * @param randomAge If true, the Giraffe will have a random age.
      * @param location The location within the field.
@@ -73,8 +72,8 @@ public class Giraffe extends Animal
                 '}';
     }
     
-    /**)
-     * Check whether or not this Giraffe is to give birth at this step.
+    /**
+     * Check whether this Giraffe is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */

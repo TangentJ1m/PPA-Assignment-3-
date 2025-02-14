@@ -1,5 +1,5 @@
 Project: foxes-and-rabbits-v2   
-Authors: Tanjim Islam & Keirna Matthew;
+Authors: Tanjim Islam & Keiran Matthew;
    
 
 A predator-prey simulation involving foxes and rabbits in
