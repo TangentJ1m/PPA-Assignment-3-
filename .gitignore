@@ -1,0 +1,10 @@
+# intelliJ files
+.idea/
+out/
+*.iml
+
+# Compiled java code
+*.class
+
+# BlueJ context files
+*.ctxt
