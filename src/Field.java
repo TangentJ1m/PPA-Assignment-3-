@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Represent a rectangular grid of field positions.
@@ -39,7 +40,10 @@ public class Field
      */
     public void placeActor(Actor anActor, Location location)
     {
-        assert location != null;
+        if (location == null) {
+            System.err.println("Tried to place actor at null");
+            return;
+        }
         Object other = field.get(location);
         if(other != null) {
             actors.remove(other);
@@ -112,6 +116,25 @@ public class Field
             Collections.shuffle(locations, rand);
         }
         return locations;
+    }
+
+    /**
+     * Gets a random location that contains an Actor that matches the given predicate within a distance of the provided
+     * location, not including the given location. Returns null if no such Actor can be found.
+     * @param location The Location from which to search.
+     * @param range the range of area we search around location
+     * @param predicate the Predicate to check each Actor with
+     * @return a Location where a suitable Actor can be found, or null if none exist
+     */
+    public Location findActor(Location location, int range, Predicate<Actor> predicate) {
+        List<Location> locations = getAdjacentLocations(location, range);
+        for (Location loc : locations) {
+            Actor a = getActorAt(loc);
+            // Found a suitable Actor
+            if (a != null && predicate.test(a)) { return loc; }
+        }
+        // Didn't find one
+        return null;
     }
 
     /**

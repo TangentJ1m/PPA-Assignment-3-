@@ -24,7 +24,7 @@ public abstract class Actor
      * @param currentField The current state of the field.
      * @param nextFieldState The new state being built.
      */
-    public abstract void act(Field currentField, Field nextFieldState);
+    public abstract void act(Field currentField, Field nextFieldState, Environment env);
     
     /**
      * @return true if the Actor is still active
@@ -48,6 +48,9 @@ public abstract class Actor
      */
     protected void setLocation(Location location)
     {
+        if (location == null) {
+            System.out.println("TRIED TO SET LOCATION TO NULL!!!!!");
+        }
         this.location = location;
     }
 

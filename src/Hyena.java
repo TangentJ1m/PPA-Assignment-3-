@@ -15,14 +15,15 @@ public class Hyena extends Animal
     // The age at which a Hyena can start to breed.
     private static final int BREEDING_AGE = 15;
     // The age to which a Hyena can live.
-    private static final int MAX_AGE = 150;
+    private static final int MAX_AGE = 20000;
     // The likelihood of a Hyena breeding.
-    private static final double BREEDING_PROBABILITY = 0.08;
+    private static final double BREEDING_PROBABILITY = 0.03;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
     // The food value of a single Zebra. In effect, this is the
     // number of steps a Hyena can go before it has to eat again.
-    private static final int Zebra_FOOD_VALUE = 9;
+    // FIXME: Shouldn't this be in the Zebra class instead?
+    private static final int ZEBRA_FOOD_VALUE = 250;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
@@ -40,7 +41,9 @@ public class Hyena extends Animal
     public Hyena(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodLevel = rand.nextInt(Zebra_FOOD_VALUE);
+        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        // TODO: Maybe this could be in Animal constructor
+        setState(AnimalState.EATING);
     }
     
     /**
@@ -50,35 +53,85 @@ public class Hyena extends Animal
      * @param currentField The field currently occupied.
      * @param nextFieldState The updated field.
      */
-    public void act(Field currentField, Field nextFieldState)//Simulation stage class needed 
+    public void act(Field currentField, Field nextFieldState, Environment env)
     {
         incrementAge();
         incrementHunger();
-        if(isActive()) {
-            List<Location> freeLocations =
-                    nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(! freeLocations.isEmpty() && canBreed(currentField)) {
-                giveBirth(nextFieldState, freeLocations);
+        updateState(env);
+        switch (getState()) {
+            case SLEEPING -> {
+                // We are sleeping, so we don't do anything
+                nextFieldState.placeActor(this, location);
             }
-            // Move towards a source of food if found.
-            Location nextLocation = findFood(currentField);
-            if(nextLocation == null && ! freeLocations.isEmpty()) {
-                // No food found - try to move to a free location.
-                nextLocation = freeLocations.remove(0);
+            case BREEDING -> {
+                Location partnerLoc = currentField.findActor(location, 1, (a) -> {
+                    if (a instanceof Hyena h) {
+                        return h.getState() == AnimalState.BREEDING && h.getGender() != this.getGender();
+                    }
+                    return false;
+                });
+
+                List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+
+                if (partnerLoc != null) {
+                    // If we found a partner then we can breed
+                    if (this.getGender() == Gender.FEMALE) {
+                        giveBirth(nextFieldState, freeLocations);
+                    }
+                }
+
+                if (!freeLocations.isEmpty()) {
+                    Location nextLoc = freeLocations.removeFirst();
+                    setLocation(nextLoc);
+                    nextFieldState.placeActor(this, nextLoc);
+                } else {
+                    setDead();
+                }
             }
-            // See if it was possible to move.
-            if(nextLocation != null) {
-                setLocation(nextLocation);
-                nextFieldState.placeActor(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
+            case EATING -> {
+                // We want to eat, so we need to look for food
+                Location foodLoc = currentField.findActor(location, 1,
+                        (a) -> a.getClass().equals(Zebra.class) );
+
+                Location nextLoc = null;
+                if (foodLoc == null) {
+                    // FIXME: generate a random adjacent location without constructing the list of all adjacencies
+                    List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+                    if (!freeLocations.isEmpty()) {
+                        nextLoc = freeLocations.removeFirst();
+                    }
+                } else {
+                    // Cast is safe as search predicate ensured this was a Zebra instance
+                    Animal food = (Animal) currentField.getActorAt(foodLoc);
+                    food.setDead();
+                    foodLevel = ZEBRA_FOOD_VALUE;
+                    nextLoc = foodLoc;
+                }
+                if (nextLoc != null) {
+                    setLocation(nextLoc);
+                    nextFieldState.placeActor(this, nextLoc);
+                } else {
+                    setDead();
+                }
             }
         }
     }
 
-
+    private void updateState(Environment env) {
+        if (!isActive()) {
+            setState(AnimalState.DEAD);
+        } else if (foodLevel < 50) {
+            setState(AnimalState.EATING);
+        } else if (env.isNight()) {
+            setState(AnimalState.SLEEPING);
+        } else if (foodLevel > 200) {
+            setState(AnimalState.BREEDING);
+        }
+        // Special case: Hyenas wake up at the end of the night
+        if (!env.isNight() && getState() == AnimalState.SLEEPING) {
+            setState(AnimalState.EATING);
+        }
+    }
 
     @Override
     public String toString() {
@@ -118,7 +171,7 @@ public class Hyena extends Animal
             if(actor instanceof Zebra || actor instanceof Giraffe) {
                 if(actor.isActive()) {
                     ((Animal)actor).setDead();
-                    foodLevel = Zebra_FOOD_VALUE;
+                    foodLevel = ZEBRA_FOOD_VALUE;
                     foodLocation = loc;
                 }
             }

@@ -51,7 +51,8 @@ public class Lion extends Animal
      * @param currentField The field currently occupied.
      * @param nextFieldState The updated field.
      */
-    public void act(Field currentField, Field nextFieldState)//Simulation stage class needed 
+    // FIXME: env is unused
+    public void act(Field currentField, Field nextFieldState, Environment env)
     {
         incrementAge();
         incrementHunger();

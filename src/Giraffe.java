@@ -41,7 +41,8 @@ public class Giraffe extends Animal
      * @param currentField The field occupied.
      * @param nextFieldState The updated field.
      */
-    public void act(Field currentField, Field nextFieldState)
+    // FIXME: env is unused
+    public void act(Field currentField, Field nextFieldState, Environment env)
     {
         incrementAge();
         if(isActive()) {

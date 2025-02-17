@@ -12,7 +12,9 @@ public abstract class Animal extends Actor {
     private static final Random rand = Randomizer.getRandom();
 
     private Gender gender;
+    // FIXME: make this private
     protected int age;
+    private AnimalState state;
 
     /**
      * Constructs a new Animal; called by subclasses instead of directly.
@@ -34,10 +36,6 @@ public abstract class Animal extends Actor {
      */
     private Gender assignGender() {
         return new Random().nextDouble() < GENDER_PROBABILITY ? Gender.MALE : Gender.FEMALE;
-    }
-
-    public Gender getGender() {
-        return gender;
     }
 
     /**
@@ -63,6 +61,18 @@ public abstract class Animal extends Actor {
         return gender == Gender.FEMALE;
     }
 
+    protected Gender getGender() {
+        return gender;
+    }
+
+    protected AnimalState getState() {
+        return state;
+    }
+
+    protected void setState(AnimalState state) {
+        this.state = state;
+    }
+
     /**
      * @return the MAX_AGE of this Animal instance
      */
@@ -70,7 +80,7 @@ public abstract class Animal extends Actor {
     
     /**
      * Increase the age.
-     * This could result in the Zebra's death.
+     * This could result in the Animal's death.
      */
     protected void incrementAge()
     {

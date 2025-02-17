@@ -85,9 +85,10 @@ public class Simulator
     public void simulate(int numSteps)
     {
         reportStats();
-        for(int n = 1; n <= numSteps && field.isViable(); n++) {
+        // FIXME: field.isViable() does not have a correct implementation
+        for(int n = 1; n <= numSteps && (true || field.isViable()); n++) {
             simulateOneStep();
-            //delay(50);         // adjust this to change execution speed
+            delay(50);         // adjust this to change execution speed
         }
     }
     
@@ -101,10 +102,11 @@ public class Simulator
         // Use a separate Field to store the starting state of
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
+        Environment env = new Environment(step);
 
         List<Actor> Actors = field.getActors();
         for (Actor anActor : Actors) { 
-            anActor.act(field, nextFieldState);
+            anActor.act(field, nextFieldState, env);
         }
         
         // Replace the old state with the new one.
@@ -141,15 +143,15 @@ public class Simulator
                 else if (rand.nextDouble() < ZEBRA_CREATION_PROBABILITY) {
                     actor = new Zebra(true, location);
                 }
-                else if (rand.nextDouble() < GIRAFFE_CREATION_PROBABILITY) {
-                    actor = new Giraffe(true, location);
-                }
-                else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
-                    actor = new Lion(true, location);
-                }
-                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
-                    actor = new Hyena(true, location);
-                }
+//                else if (rand.nextDouble() < GIRAFFE_CREATION_PROBABILITY) {
+//                    actor = new Giraffe(true, location);
+//                }
+//                else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
+//                    actor = new Lion(true, location);
+//                }
+//                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
+//                    actor = new Hyena(true, location);
+//                }
                 if (actor != null) {
                     field.placeActor(actor, location);
                 }

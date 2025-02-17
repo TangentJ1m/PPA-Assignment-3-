@@ -14,9 +14,9 @@ public class Zebra extends Animal
     // The age at which a Zebra can start to breed.
     private static final int BREEDING_AGE = 5;
     // The age to which a Zebra can live.
-    private static final int MAX_AGE = 40;
+    private static final int MAX_AGE = 20000;
     // The likelihood of a Zebra breeding.
-    private static final double BREEDING_PROBABILITY = 0.09;
+    private static final double BREEDING_PROBABILITY = 0.01;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
     // A shared random number generator to control breeding.
@@ -33,34 +33,81 @@ public class Zebra extends Animal
     {
         super(randomAge, location);
     }
-    
-    /**
-     * This is what the Zebra does most of the time - it runs 
-     * around. Sometimes it will breed or die of old age.
-     * @param currentField The field occupied.
-     * @param nextFieldState The updated field.
-     */
-    public void act(Field currentField, Field nextFieldState)
+
+    public void act(Field currentField, Field nextFieldState, Environment env)
     {
         incrementAge();
-        if(isActive()) {
-            List<Location> freeLocations = 
-                nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(!freeLocations.isEmpty()) {
-                giveBirth(nextFieldState, freeLocations);
+        updateState(env);
+        switch (getState()) {
+            case SLEEPING -> {
+                // We are sleeping, so we don't do anything
+                nextFieldState.placeActor(this, location);
             }
-            // Try to move into a free location.
-            if(! freeLocations.isEmpty()) {
-                Location nextLocation = freeLocations.get(0);
-                setLocation(nextLocation);
-                nextFieldState.placeActor(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
+            case BREEDING -> {
+                Location partnerLoc = currentField.findActor(location, 1, (a) -> {
+                    if (a instanceof Zebra z) {
+                        return z.getState() == AnimalState.BREEDING && z.getGender() != this.getGender();
+                    }
+                    return false;
+                });
+
+                List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+
+                if (partnerLoc != null) {
+                    // If we found a partner then we can breed
+                    if (this.getGender() == Gender.FEMALE) {
+                        giveBirth(nextFieldState, freeLocations);
+                    }
+                }
+
+                if (!freeLocations.isEmpty()) {
+                    Location nextLoc = freeLocations.removeFirst();
+                    setLocation(nextLoc);
+                    nextFieldState.placeActor(this, nextLoc);
+                } else {
+                    setDead();
+                }
             }
         }
     }
+
+    private void updateState(Environment env) {
+        if (!isActive()) {
+            setState(AnimalState.DEAD);
+        } else if (env.isNight()) {
+            setState(AnimalState.SLEEPING);
+        } else {
+            setState(AnimalState.BREEDING);
+        }
+    }
+
+//    /**
+//     * This is what the Zebra does most of the time - it runs
+//     * around. Sometimes it will breed or die of old age.
+//     * @param currentField The field occupied.
+//     * @param nextFieldState The updated field.
+//     */
+//    public void act(Field currentField, Field nextFieldState, Environment env)
+//    {
+//        incrementAge();
+//        if(isActive()) {
+//            List<Location> freeLocations =
+//                nextFieldState.getFreeAdjacentLocations(getLocation());
+//            if(!freeLocations.isEmpty()) {
+//                giveBirth(nextFieldState, freeLocations);
+//            }
+//            // Try to move into a free location.
+//            if(! freeLocations.isEmpty()) {
+//                Location nextLocation = freeLocations.get(0);
+//                setLocation(nextLocation);
+//                nextFieldState.placeActor(this, nextLocation);
+//            }
+//            else {
+//                // Overcrowding.
+//                setDead();
+//            }
+//        }
+//    }
 
     @Override
     public String toString() {

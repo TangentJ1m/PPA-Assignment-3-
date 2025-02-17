@@ -19,8 +19,9 @@ public class Hunter extends Actor
     public boolean isActive() {
         return true;
     }
-    
-    public void act(Field currentField, Field nextFieldState) {
+
+    // FIXME: env is unused
+    public void act(Field currentField, Field nextFieldState, Environment env) {
         List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(getLocation());
 
         // Move towards a source of food if found.
