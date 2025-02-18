@@ -14,14 +14,14 @@ public class Zebra extends Animal
     // The age at which a Zebra can start to breed.
     private static final int BREEDING_AGE = 5;
     // The age to which a Zebra can live.
-    private static final int MAX_AGE = 20000;
+    protected int getMaxAge() { return 20000; }
     // The likelihood of a Zebra breeding.
     private static final double BREEDING_PROBABILITY = 0.01;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
-    // A shared random number generator to control breeding.
-    private static final Random rand = Randomizer.getRandom();
-    
+    // How much "food" a zebra gives when eaten
+    protected int getFoodValue() { return 100; }
+
     /**
      * Create a new Zebra. A Zebra may be created with age
      * zero (a newborn) or with a random age.
@@ -32,47 +32,10 @@ public class Zebra extends Animal
     public Zebra(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodValue = 100;
     }
 
-    public void act(Field currentField, Field nextFieldState, Environment env)
-    {
-        incrementAge();
-        updateState(env);
-        switch (getState()) {
-            case SLEEPING -> {
-                // We are sleeping, so we don't do anything
-                nextFieldState.placeActor(this, location);
-            }
-            case BREEDING -> {
-                Location partnerLoc = currentField.findActor(location, 1, (a) -> {
-                    if (a instanceof Zebra z) {
-                        return z.getState() == AnimalState.BREEDING && z.getGender() != this.getGender();
-                    }
-                    return false;
-                });
-
-                List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
-
-                if (partnerLoc != null) {
-                    // If we found a partner then we can breed
-                    if (this.getGender() == Gender.FEMALE) {
-                        giveBirth(nextFieldState, freeLocations);
-                    }
-                }
-
-                if (!freeLocations.isEmpty()) {
-                    Location nextLoc = freeLocations.removeFirst();
-                    setLocation(nextLoc);
-                    nextFieldState.placeActor(this, nextLoc);
-                } else {
-                    setDead();
-                }
-            }
-        }
-    }
-
-    private void updateState(Environment env) {
+    @Override
+    protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
         } else if (env.isNight()) {
@@ -82,38 +45,10 @@ public class Zebra extends Animal
         }
     }
 
-//    /**
-//     * This is what the Zebra does most of the time - it runs
-//     * around. Sometimes it will breed or die of old age.
-//     * @param currentField The field occupied.
-//     * @param nextFieldState The updated field.
-//     */
-//    public void act(Field currentField, Field nextFieldState, Environment env)
-//    {
-//        incrementAge();
-//        if(isActive()) {
-//            List<Location> freeLocations =
-//                nextFieldState.getFreeAdjacentLocations(getLocation());
-//            if(!freeLocations.isEmpty()) {
-//                giveBirth(nextFieldState, freeLocations);
-//            }
-//            // Try to move into a free location.
-//            if(! freeLocations.isEmpty()) {
-//                Location nextLocation = freeLocations.get(0);
-//                setLocation(nextLocation);
-//                nextFieldState.placeActor(this, nextLocation);
-//            }
-//            else {
-//                // Overcrowding.
-//                setDead();
-//            }
-//        }
-//    }
-
     @Override
     public String toString() {
         return "Zebra{" +
-                "age=" + age +
+                "age=" + getAge() +
                 ", alive=" + isActive() +
                 ", location=" + getLocation() +
                 '}';
@@ -124,7 +59,7 @@ public class Zebra extends Animal
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
         // New Zebras are born into adjacent locations.
         // Get a list of adjacent free locations.
@@ -161,15 +96,18 @@ public class Zebra extends Animal
      */
     private boolean canBreed()
     {
-        return age >= BREEDING_AGE;
+        return getAge() >= BREEDING_AGE;
     }
-    
+
+    /**
+     * Check if this animal can eat the given actor
+     * @param actor the actor to check
+     * @return true if this animal can eat `actor`
+     */
     @Override
-    protected int getMaxAge(){
-        return MAX_AGE;
-    }
-    
-    protected boolean isPrey(Actor actor){
-        return true;
+    protected boolean canEat(Actor actor)
+    {
+        // Doesn't eat anything (yet)
+        return false;
     }
 }

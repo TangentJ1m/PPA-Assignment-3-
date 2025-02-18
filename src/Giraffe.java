@@ -14,15 +14,14 @@ public class Giraffe extends Animal
     // The age at which a Giraffe can start to breed.
     private static final int BREEDING_AGE = 10;
     // The age to which a Giraffe can live.
-    private static final int MAX_AGE = 60;
+    protected int getMaxAge() { return 60; }
     // The likelihood of a Giraffe breeding.
     private static final double BREEDING_PROBABILITY = 0.00;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // A shared random number generator to control breeding.
-    private static final Random rand = Randomizer.getRandom();
-    private static final List<Class<?>> PREY = Arrays.asList();
-    
+    // The amount of "food" a giraffe gives when eaten
+    protected int getFoodValue() { return -1; } // FIXME: Should be eaten?
+
     /**
      * Create a new Giraffe. A Giraffe may be created with age
      * zero (a newborn) or with a random age.
@@ -33,8 +32,6 @@ public class Giraffe extends Animal
     public Giraffe(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodValue = 10;
-
     }
     
     /**
@@ -69,7 +66,7 @@ public class Giraffe extends Animal
     @Override
     public String toString() {
         return "Giraffe{" +
-                "age=" + age +
+                "age=" + getAge() +
                 ", active=" + isActive() +
                 ", location=" + getLocation() +
                 '}';
@@ -80,7 +77,7 @@ public class Giraffe extends Animal
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
         // New Giraffes are born into adjacent locations.
         // Get a list of adjacent free locations.
@@ -117,20 +114,19 @@ public class Giraffe extends Animal
      */
     private boolean canBreed()
     {
-        return age >= BREEDING_AGE;
+        return getAge() >= BREEDING_AGE;
     }
-    
-    @Override
-    protected int getMaxAge(){
-        return MAX_AGE;
-    }
-    
+
     /**
-     * Checks if the given actor is prey for the Giraffe
-     * @param actor The actor to check.
-     * @return True if the actor is prey.
+     * Check if this animal can eat the given actor
+     * @param actor the actor to check
+     * @return true if this animal can eat `actor`
      */
-    protected boolean isPrey(Actor actor) {
-        return actor != null && PREY.contains(actor.getClass());
+    @Override
+    protected boolean canEat(Actor actor) {
+        // Doesn't eat anything (yet)
+        return false;
     }
+
+    protected void updateState(Environment env) {}
 }

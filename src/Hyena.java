@@ -15,113 +15,37 @@ public class Hyena extends Animal
     // The age at which a Hyena can start to breed.
     private static final int BREEDING_AGE = 15;
     // The age to which a Hyena can live.
-    private static final int MAX_AGE = 20000;
+    protected int getMaxAge() { return 20000; }
     // The likelihood of a Hyena breeding.
     private static final double BREEDING_PROBABILITY = 0.03;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // A shared random number generator to control breeding.
-    private static final Random rand = Randomizer.getRandom();
-    // List of prey's that animal can eat 
+    // List of preys that a hyena can eat
     private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
-
-    // The Hyena's food level, which is increased by eating Zebras.
-    private int foodLevel;
+    // The amount of "food" a hyena gives when eaten
+    protected int getFoodValue() { return -1; } // Shouldn't be eaten
 
     /**
      * Create a Hyena. A Hyena can be created as a newborn (age zero
      * and not hungry) or with a random age and food level.
-     * 
+     *
      * @param randomAge If true, the Hyena will have random age and hunger level.
      * @param location The location within the field.
      */
     public Hyena(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodLevel = rand.nextInt(10);
-        // TODO: Maybe this could be in Animal constructor
-        setState(AnimalState.EATING);
-    }
-    
-    /**
-     * This is what the Hyena does most of the time: it hunts for
-     * Zebras. In the process, it might breed, die of hunger,
-     * or die of old age.
-     * @param currentField The field currently occupied.
-     * @param nextFieldState The updated field.
-     */
-    public void act(Field currentField, Field nextFieldState, Environment env)
-    {
-        incrementAge();
-        incrementHunger();
-        updateState(env);
-        switch (getState()) {
-            case SLEEPING -> {
-                // We are sleeping, so we don't do anything
-                nextFieldState.placeActor(this, location);
-            }
-            case BREEDING -> {
-                Location partnerLoc = currentField.findActor(location, 1, (a) -> {
-                    if (a instanceof Hyena h) {
-                        return h.getState() == AnimalState.BREEDING && h.getGender() != this.getGender();
-                    }
-                    return false;
-                });
-
-                List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
-
-                if (partnerLoc != null) {
-                    // If we found a partner then we can breed
-                    if (this.getGender() == Gender.FEMALE) {
-                        giveBirth(nextFieldState, freeLocations);
-                    }
-                }
-
-                if (!freeLocations.isEmpty()) {
-                    Location nextLoc = freeLocations.removeFirst();
-                    setLocation(nextLoc);
-                    nextFieldState.placeActor(this, nextLoc);
-                } else {
-                    setDead();
-                }
-            }
-            case EATING -> {
-                // We want to eat, so we need to look for food
-                Location foodLoc = currentField.findActor(location, 1,
-                        (a) -> a.getClass().equals(Zebra.class) );
-
-                Location nextLoc = null;
-                if (foodLoc == null) {
-                    // FIXME: generate a random adjacent location without constructing the list of all adjacencies
-                    List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
-                    if (!freeLocations.isEmpty()) {
-                        nextLoc = freeLocations.removeFirst();
-                    }
-                } else {
-                    // Cast is safe as search predicate ensured this was a Zebra instance
-                    Animal food = (Animal) currentField.getActorAt(foodLoc);
-                    food.setDead();
-                    foodLevel = food.getFoodValue();
-                    nextLoc = foodLoc;
-                }
-                if (nextLoc != null) {
-                    setLocation(nextLoc);
-                    nextFieldState.placeActor(this, nextLoc);
-                } else {
-                    setDead();
-                }
-            }
-        }
     }
 
-    private void updateState(Environment env) {
+    @Override
+    protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (foodLevel < 50) {
+        } else if (getFoodLevel() < 50) {
             setState(AnimalState.EATING);
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (foodLevel > 200) {
+        } else if (getFoodLevel() > 200) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Hyenas wake up at the end of the night
@@ -133,30 +57,19 @@ public class Hyena extends Animal
     @Override
     public String toString() {
         return "Hyena{" +
-                "age=" + age +
+                "age=" + getAge() +
                 ", active=" + isActive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
+                ", foodLevel=" + getFoodLevel() +
                 '}';
     }
-    
-    /**
-     * Make this Hyena more hungry. This could result in the Hyena's death.
-     */
-    private void incrementHunger()
-    {
-        foodLevel--;
-        if(foodLevel <= 0) {
-            setDead();
-        }
-    }
-    
+
     /**
      * Check whether this Hyena is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
         // New Hyenas are born into adjacent locations.
         // Get a list of adjacent free locations.
@@ -186,21 +99,14 @@ public class Hyena extends Animal
         }
         return births;
     }
-
+    
     /**
-     * A Hyena can breed if it has reached the breeding age.
+     * Check if this animal can eat the given actor
+     * @param actor the actor to check
+     * @return true if this animal can eat `actor`
      */
-    private boolean canBreed(Field field)
-    {
-        return age >= BREEDING_AGE && isFemale() && isMaleNearby(field);
-    }
-    
     @Override
-    protected int getMaxAge(){
-        return MAX_AGE;
-    }
-    
-    protected boolean isPrey(Actor actor){
+    protected boolean canEat(Actor actor){
         return actor != null && PREY.contains(actor.getClass());
     }
 }

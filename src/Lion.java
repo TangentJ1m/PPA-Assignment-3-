@@ -15,18 +15,16 @@ public class Lion extends Animal
     // The age at which a Lion can start to breed.
     private static final int BREEDING_AGE = 15;
     // The age to which a Lion can live.
-    private static final int MAX_AGE = 150;
+    protected int getMaxAge() { return 150; }
     // The likelihood of a Lion breeding.
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    private static final Random rand = Randomizer.getRandom();
-
-    
-    // Individual characteristics (instance fields).
+    // How much "food" a lion gives when eaten
+    protected int getFoodValue() { return -1; } // Shouldn't be eaten
+    // The animals a lion can eat
     private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
-    // The Lion's food level, which is increased by eating Zebras.
-    private int foodLevel;
+
 
     /**
      * Create a Lion. A Lion can be created as a newborn (age zero
@@ -38,7 +36,6 @@ public class Lion extends Animal
     public Lion(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodLevel = rand.nextInt(50,100);
     }
     
     /**
@@ -83,22 +80,11 @@ public class Lion extends Animal
     @Override
     public String toString() {
         return "Lion{" +
-                "age=" + age +
+                "age=" + getAge() +
                 ", active=" + isActive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
+                ", foodLevel=" + getFoodLevel() +
                 '}';
-    }
-    
-    /**
-     * Make this Lion more hungry. This could result in the Lion's death.
-     */
-    private void incrementHunger()
-    {
-        //foodLevel--;
-        if(foodLevel <= 0) {
-            setDead();
-        }
     }
     
     /**
@@ -106,7 +92,7 @@ public class Lion extends Animal
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
     {
         // New Lions are born into adjacent locations.
         // Get a list of adjacent free locations.
@@ -142,15 +128,21 @@ public class Lion extends Animal
      */
     private boolean canBreed(Field field)
     {
-        return age >= BREEDING_AGE && isFemale() && isMaleNearby(field);
+        return getAge() >= BREEDING_AGE && isFemale() && isMaleNearby(field);
     }
-    
+
+    /**
+     * Check if this animal can eat the given actor
+     * @param actor the actor to check
+     * @return true if this animal can eat `actor`
+     */
     @Override
-    protected int getMaxAge(){
-        return MAX_AGE;
-    }
-    
-    protected boolean isPrey(Actor actor){
+    protected boolean canEat(Actor actor){
         return actor != null && PREY.contains(actor.getClass());
+    }
+
+    protected void updateState(Environment env)
+    {
+
     }
 }
