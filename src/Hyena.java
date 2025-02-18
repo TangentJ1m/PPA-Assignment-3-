@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Iterator;
 import java.util.Random;
-
+import java.util.Arrays;
 /**
  * A simple model of a Hyena.
  * Hyenas age, move, eat Zebras, and die.
@@ -20,13 +20,10 @@ public class Hyena extends Animal
     private static final double BREEDING_PROBABILITY = 0.03;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // The food value of a single Zebra. In effect, this is the
-    // number of steps a Hyena can go before it has to eat again.
-    // FIXME: Shouldn't this be in the Zebra class instead?
-    private static final int ZEBRA_FOOD_VALUE = 250;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-    
+    // List of prey's that animal can eat 
+    private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
 
     // The Hyena's food level, which is increased by eating Zebras.
     private int foodLevel;
@@ -41,7 +38,7 @@ public class Hyena extends Animal
     public Hyena(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        foodLevel = rand.nextInt(10);
         // TODO: Maybe this could be in Animal constructor
         setState(AnimalState.EATING);
     }
@@ -104,7 +101,7 @@ public class Hyena extends Animal
                     // Cast is safe as search predicate ensured this was a Zebra instance
                     Animal food = (Animal) currentField.getActorAt(foodLoc);
                     food.setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
+                    foodLevel = food.getFoodValue();
                     nextLoc = foodLoc;
                 }
                 if (nextLoc != null) {
@@ -155,31 +152,6 @@ public class Hyena extends Animal
     }
     
     /**
-     * Look for Zebras adjacent to the current location.
-     * Only the first live Zebra is eaten.
-     * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
-     */
-    private Location findFood(Field field)
-    {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation(),1);
-        Iterator<Location> it = adjacent.iterator();
-        Location foodLocation = null;
-        while(foodLocation == null && it.hasNext()) {
-            Location loc = it.next();
-            Actor actor = field.getActorAt(loc);
-            if(actor instanceof Zebra || actor instanceof Giraffe) {
-                if(actor.isActive()) {
-                    ((Animal)actor).setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
-                    foodLocation = loc;
-                }
-            }
-        }
-        return foodLocation;
-    }
-    
-    /**
      * Check whether this Hyena is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
@@ -226,5 +198,9 @@ public class Hyena extends Animal
     @Override
     protected int getMaxAge(){
         return MAX_AGE;
+    }
+    
+    protected boolean isPrey(Actor actor){
+        return actor != null && PREY.contains(actor.getClass());
     }
 }

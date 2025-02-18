@@ -1,6 +1,6 @@
 import java.util.List;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Arrays;
 
 /**
  * A simple model of a Lion.
@@ -20,14 +20,11 @@ public class Lion extends Animal
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // The food value of a single Zebra. In effect, this is the
-    // number of steps a Lion can go before it has to eat again.
-    private static final int Zebra_FOOD_VALUE = 9;
-    // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
+
     
     // Individual characteristics (instance fields).
-
+    private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
     // The Lion's food level, which is increased by eating Zebras.
     private int foodLevel;
 
@@ -41,7 +38,7 @@ public class Lion extends Animal
     public Lion(boolean randomAge, Location location)
     {
         super(randomAge, location);
-        foodLevel = rand.nextInt(Zebra_FOOD_VALUE);
+        foodLevel = rand.nextInt(50,100);
     }
     
     /**
@@ -56,27 +53,28 @@ public class Lion extends Animal
     {
         incrementAge();
         incrementHunger();
-        if(isActive()) {
-            List<Location> freeLocations =
-                    nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(! freeLocations.isEmpty() && canBreed(currentField)) {
-                giveBirth(nextFieldState, freeLocations);
-            }
-            // Move towards a source of food if found.
-            Location nextLocation = findFood(currentField);
-            if(nextLocation == null && ! freeLocations.isEmpty()) {
-                // No food found - try to move to a free location.
-                nextLocation = freeLocations.remove(0);
-            }
-            // See if it was possible to move.
-            if(nextLocation != null) {
-                setLocation(nextLocation);
-                nextFieldState.placeActor(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
-            }
+        
+        if (!isActive())return;
+        
+        List<Location> freeLocations =
+                nextFieldState.getFreeAdjacentLocations(getLocation());
+        if(! freeLocations.isEmpty() && canBreed(currentField)) {
+            giveBirth(nextFieldState, freeLocations);
+        }
+        // Move towards a source of food if found.
+        Location nextLocation = findFood(currentField);
+        if(nextLocation == null && ! freeLocations.isEmpty()) {
+            // No food found - try to move to a free location.
+            nextLocation = freeLocations.remove(0);
+        }
+        // See if it was possible to move.
+        if(nextLocation != null) {
+            setLocation(nextLocation);
+            nextFieldState.placeActor(this, nextLocation);
+        }
+        else {
+            // Overcrowding.
+            //setDead();
         }
     }
 
@@ -97,35 +95,10 @@ public class Lion extends Animal
      */
     private void incrementHunger()
     {
-        foodLevel--;
+        //foodLevel--;
         if(foodLevel <= 0) {
             setDead();
         }
-    }
-    
-    /**
-     * Look for Zebras adjacent to the current location.
-     * Only the first live Zebra is eaten.
-     * @param field The field currently occupied.
-     * @return Where food was found, or null if it wasn't.
-     */
-    private Location findFood(Field field)
-    {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation(),1);
-        Iterator<Location> it = adjacent.iterator();
-        Location foodLocation = null;
-        while(foodLocation == null && it.hasNext()) {
-            Location loc = it.next();
-            Actor actor = field.getActorAt(loc);
-            if(actor instanceof Zebra || actor instanceof Giraffe) {
-                if(actor.isActive()) {
-                    ((Animal)actor).setDead();
-                    foodLevel = Zebra_FOOD_VALUE;
-                    foodLocation = loc;
-                }
-            }
-        }
-        return foodLocation;
     }
     
     /**
@@ -175,5 +148,9 @@ public class Lion extends Animal
     @Override
     protected int getMaxAge(){
         return MAX_AGE;
+    }
+    
+    protected boolean isPrey(Actor actor){
+        return actor != null && PREY.contains(actor.getClass());
     }
 }

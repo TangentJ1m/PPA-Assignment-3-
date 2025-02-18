@@ -88,7 +88,7 @@ public class Simulator
         // FIXME: field.isViable() does not have a correct implementation
         for(int n = 1; n <= numSteps && (true || field.isViable()); n++) {
             simulateOneStep();
-            delay(50);         // adjust this to change execution speed
+            //delay(50);         // adjust this to change execution speed
         }
     }
     
@@ -143,15 +143,15 @@ public class Simulator
                 else if (rand.nextDouble() < ZEBRA_CREATION_PROBABILITY) {
                     actor = new Zebra(true, location);
                 }
-//                else if (rand.nextDouble() < GIRAFFE_CREATION_PROBABILITY) {
-//                    actor = new Giraffe(true, location);
-//                }
-//                else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
-//                    actor = new Lion(true, location);
-//                }
-//                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
-//                    actor = new Hyena(true, location);
-//                }
+                else if (rand.nextDouble() < GIRAFFE_CREATION_PROBABILITY) {
+                    actor = new Giraffe(true, location);
+                }
+                else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
+                    actor = new Lion(true, location);
+                }
+                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
+                    actor = new Hyena(true, location);
+                }
                 if (actor != null) {
                     field.placeActor(actor, location);
                 }

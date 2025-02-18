@@ -1,6 +1,6 @@
 import java.util.List;
 import java.util.Random;
-
+import java.util.Arrays;
 /**
  * A simple model of a Giraffe.
  * Giraffes age, move, breed, and die.
@@ -16,11 +16,12 @@ public class Giraffe extends Animal
     // The age to which a Giraffe can live.
     private static final int MAX_AGE = 60;
     // The likelihood of a Giraffe breeding.
-    private static final double BREEDING_PROBABILITY = 1;
+    private static final double BREEDING_PROBABILITY = 0.00;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
+    private static final List<Class<?>> PREY = Arrays.asList();
     
     /**
      * Create a new Giraffe. A Giraffe may be created with age
@@ -32,6 +33,7 @@ public class Giraffe extends Animal
     public Giraffe(boolean randomAge, Location location)
     {
         super(randomAge, location);
+        foodValue = 10;
 
     }
     
@@ -121,5 +123,14 @@ public class Giraffe extends Animal
     @Override
     protected int getMaxAge(){
         return MAX_AGE;
+    }
+    
+    /**
+     * Checks if the given actor is prey for the Giraffe
+     * @param actor The actor to check.
+     * @return True if the actor is prey.
+     */
+    protected boolean isPrey(Actor actor) {
+        return actor != null && PREY.contains(actor.getClass());
     }
 }

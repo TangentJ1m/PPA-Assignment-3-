@@ -10,7 +10,9 @@ import java.util.*;
 public abstract class Animal extends Actor {
     protected static final double GENDER_PROBABILITY = 0.5;
     private static final Random rand = Randomizer.getRandom();
-
+    protected int foodValue;
+    protected int foodLevel;
+    
     private Gender gender;
     // FIXME: make this private
     protected int age;
@@ -108,6 +110,29 @@ public abstract class Animal extends Actor {
             }
         }
         return false;
+    }
+    
+    protected Location findFood(Field field){
+        for (Location loc : field.getAdjacentLocations(getLocation(), 1)){
+            Actor actor = field.getActorAt(loc); 
+            if(actor != null){
+                if (!isPrey(actor) && actor.isActive()){
+                    ((Animal) actor).setDead();
+                    foodLevel +=((Animal) actor).getFoodValue();
+                    System.out.println("Food found");
+                    return loc; 
+                }
+            }
+        }
+        return null;
+    }
+    
+    protected boolean isPrey(Actor actor){
+        return actor != null;
+    }
+    
+    protected int getFoodValue(){
+        return foodValue;
     }
 }
     

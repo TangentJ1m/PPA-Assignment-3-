@@ -32,6 +32,7 @@ public class Zebra extends Animal
     public Zebra(boolean randomAge, Location location)
     {
         super(randomAge, location);
+        foodValue = 100;
     }
 
     public void act(Field currentField, Field nextFieldState, Environment env)
@@ -166,5 +167,9 @@ public class Zebra extends Animal
     @Override
     protected int getMaxAge(){
         return MAX_AGE;
+    }
+    
+    protected boolean isPrey(Actor actor){
+        return true;
     }
 }
