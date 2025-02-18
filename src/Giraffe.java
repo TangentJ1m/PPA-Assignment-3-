@@ -14,13 +14,13 @@ public class Giraffe extends Animal
     // The age at which a Giraffe can start to breed.
     private static final int BREEDING_AGE = 10;
     // The age to which a Giraffe can live.
-    protected int getMaxAge() { return 60; }
+    protected int getMaxAge() { return 1800; }
     // The likelihood of a Giraffe breeding.
-    private static final double BREEDING_PROBABILITY = 0.00;
+    private static final double BREEDING_PROBABILITY = 0.02;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
     // The amount of "food" a giraffe gives when eaten
-    protected int getFoodValue() { return -1; } // FIXME: Should be eaten?
+    protected int getFoodValue() { return 120; }
 
     /**
      * Create a new Giraffe. A Giraffe may be created with age
@@ -34,35 +34,6 @@ public class Giraffe extends Animal
         super(randomAge, location);
     }
     
-    /**
-     * This is what the Giraffe does most of the time - it runs 
-     * around. Sometimes it will breed or die of old age.
-     * @param currentField The field occupied.
-     * @param nextFieldState The updated field.
-     */
-    // FIXME: env is unused
-    public void act(Field currentField, Field nextFieldState, Environment env)
-    {
-        incrementAge();
-        if(isActive()) {
-            List<Location> freeLocations = 
-                nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(!freeLocations.isEmpty()) {
-                giveBirth(nextFieldState, freeLocations);
-            }
-            // Try to move into a free location.
-            if(! freeLocations.isEmpty()) {
-                Location nextLocation = freeLocations.get(0);
-                setLocation(nextLocation);
-                nextFieldState.placeActor(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "Giraffe{" +
@@ -128,5 +99,13 @@ public class Giraffe extends Animal
         return false;
     }
 
-    protected void updateState(Environment env) {}
+    protected void updateState(Environment env) {
+        if (!isActive()) {
+            setState(AnimalState.DEAD);
+        } else if (env.isNight()) {
+            setState(AnimalState.SLEEPING);
+        } else {
+            setState(AnimalState.BREEDING);
+        }
+    }
 }

@@ -131,7 +131,9 @@ public abstract class Animal extends Actor {
     protected boolean isMaleNearby(Field field)
     {
         return field.findActor(getLocation(), 1,
-                (a) -> a.getClass().equals(this.getClass()) && ((Animal) a).isMale())
+                (a) -> a.getClass().equals(this.getClass()) &&
+                        // Cast is safe as we know a is an Animal subtype
+                        ((Animal) a).isMale())
                 != null;
     }
 
@@ -155,6 +157,7 @@ public abstract class Animal extends Actor {
     {
         return field.findActor(getLocation(), 1,
                 (a) -> a.getClass().equals(this.getClass()) &&
+                        // Casts are safe as we know a is a subtype of Animal
                         ((Animal) a).getGender() != this.getGender() &&
                         ((Animal) a).state == AnimalState.BREEDING);
     }
@@ -182,7 +185,21 @@ public abstract class Animal extends Actor {
     protected void sleepAction(Field nextFieldState)
     {
         // We are sleeping, so we don't do anything
-        nextFieldState.placeActor(this, location);
+        Location nextLocation = location;
+        if (nextFieldState.getActorAt(location) != null) {
+            // Someone has entered our square so we try to move (otherwise we effectively kill them)
+            // Maybe we are pushed by the other animal out of our square
+            List<Location> possibleLocs = nextFieldState.getFreeAdjacentLocations(location);
+            if (!possibleLocs.isEmpty()) {
+                nextLocation = possibleLocs.getFirst();
+            }
+            else {
+                // Overcrowding
+                setDead();
+                return;
+            }
+        }
+        nextFieldState.placeActor(this, nextLocation);
     }
 
     protected void breedAction(Field currentField, Field nextFieldState)

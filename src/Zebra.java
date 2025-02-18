@@ -14,13 +14,13 @@ public class Zebra extends Animal
     // The age at which a Zebra can start to breed.
     private static final int BREEDING_AGE = 5;
     // The age to which a Zebra can live.
-    protected int getMaxAge() { return 20000; }
+    protected int getMaxAge() { return 1800; }
     // The likelihood of a Zebra breeding.
-    private static final double BREEDING_PROBABILITY = 0.01;
+    private static final double BREEDING_PROBABILITY = 0.02;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
     // How much "food" a zebra gives when eaten
-    protected int getFoodValue() { return 100; }
+    protected int getFoodValue() { return 90; }
 
     /**
      * Create a new Zebra. A Zebra may be created with age
