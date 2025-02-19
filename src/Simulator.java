@@ -25,8 +25,8 @@ public class Simulator
 
     // The current state of the field.
     private Field field;
-    // The current step of the simulation.
-    private int step;
+    // The current environment of the simulation.
+    private Environment env;
     // A graphical view of the simulation.
     private final SimulatorView view;
 
@@ -88,7 +88,7 @@ public class Simulator
         // FIXME: field.isViable() does not have a correct implementation
         for(int n = 1; n <= numSteps && (true || field.isViable()); n++) {
             simulateOneStep();
-            //delay(50);         // adjust this to change execution speed
+            delay(50);         // adjust this to change execution speed
         }
     }
     
@@ -98,11 +98,10 @@ public class Simulator
      */
     public void simulateOneStep()
     {
-        step++;
+        env.incrementTime();
         // Use a separate Field to store the starting state of
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
-        Environment env = new Environment(step);
 
         List<Actor> Actors = field.getActors();
         for (Actor anActor : Actors) { 
@@ -113,7 +112,7 @@ public class Simulator
         field = nextFieldState;
 
         reportStats();
-        view.showStatus(calculateTime(step), field);
+        view.showStatus(env.getEnvString(), field);
     }
         
     /**
@@ -121,9 +120,9 @@ public class Simulator
      */
     public void reset()
     {
-        step = 0;
+        env = new Environment();
         populate();
-        view.showStatus(calculateTime(step), field);
+        view.showStatus(env.getEnvString(), field);
     }
     
     /**
