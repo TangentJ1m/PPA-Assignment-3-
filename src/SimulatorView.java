@@ -21,7 +21,6 @@ public class SimulatorView extends JFrame
     // Color used for objects that have no defined color.
     private static final Color UNKNOWN_COLOR = Color.gray;
 
-    private final String STEP_PREFIX = "Time: ";
     private final String POPULATION_PREFIX = "Population: ";
     private final JLabel stepLabel;
     private final JLabel population;
@@ -44,11 +43,11 @@ public class SimulatorView extends JFrame
         setColor(Zebra.class, Color.orange);
         setColor(Hyena.class, Color.blue);
         setColor(Giraffe.class, Color.red);
-        setColor(Hunter.class, Color.black);
         setColor(Lion.class, Color.black);
 
         setTitle("Savannah Simulation");
-        stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
+        // the gui doesn't like if it there's no text by default
+        stepLabel = new JLabel("[]", JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
         
         setLocation(100, 50);
@@ -98,7 +97,7 @@ public class SimulatorView extends JFrame
         if(!isVisible()) {
             setVisible(true);
         }
-        stepLabel.setText(STEP_PREFIX + time);
+        stepLabel.setText(time);
         stats.reset();
         
         fieldView.preparePaint();

@@ -17,10 +17,9 @@ public class Simulator
     private static final int DEFAULT_DEPTH = 80;
     // The probability that each actor will be created in any given grid position.
     private static final double HYENA_CREATION_PROBABILITY = 0.02;
-    private static final double ZEBRA_CREATION_PROBABILITY = 0.08;
-    private static final double GIRAFFE_CREATION_PROBABILITY = 0.06;
-    private static final double HUNTER_CREATION_PROBABILITY = 0.01;
-    private static final double LION_CREATION_PROBABILITY = 0.02;
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.05;
+    private static final double GIRAFFE_CREATION_PROBABILITY = 0.04;
+    private static final double LION_CREATION_PROBABILITY = 0.01;
 
 
     // The current state of the field.
@@ -84,7 +83,8 @@ public class Simulator
      */
     public void simulate(int numSteps)
     {
-        reportStats();
+        // Don't need to report stats, already reported in the gui
+        // reportStats();
         for(int n = 1; n <= numSteps && field.isViable(); n++) {
             simulateOneStep();
             delay(50);         // adjust this to change execution speed
@@ -110,7 +110,8 @@ public class Simulator
         // Replace the old state with the new one.
         field = nextFieldState;
 
-        reportStats();
+        // Don't need to report stats, already in the gui
+        // reportStats();
         view.showStatus(env.getEnvString(), field);
     }
         
@@ -146,9 +147,6 @@ public class Simulator
                 }
                 else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
                     actor = new Lion(true, location);
-                }
-                else if (rand.nextDouble() < HUNTER_CREATION_PROBABILITY) {
-                    actor = new Hyena(true, location);
                 }
                 if (actor != null) {
                     field.placeActor(actor, location);

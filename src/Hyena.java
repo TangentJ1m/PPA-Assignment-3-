@@ -11,15 +11,13 @@ public class Hyena extends Animal
 {
     // Characteristics shared by all Hyenas (class variables).
     // The age at which a Hyena can start to breed.
-    protected int getBreedingAge() { return 15; }
+    protected int getBreedingAge() { return 24; }
     // The age to which a Hyena can live.
-    protected int getMaxAge() { return 1800; }
+    protected int getMaxAge() { return 24*7; }
     // The likelihood of a Hyena breeding.
-    protected double getBreedingProbability() { return 0.01; }
+    protected double getBreedingProbability() { return 0.05; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
-    // List of preys that a hyena can eat
-    private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
     // The amount of "food" a hyena gives when eaten
     protected int getFoodValue() { return -1; } // Shouldn't be eaten
 
@@ -39,11 +37,11 @@ public class Hyena extends Animal
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (getFoodLevel() < 50) {
+        } else if (getFoodLevel() < 24*2) {
             setState(AnimalState.EATING);
         } else if (!env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 200 && canBreed()) {
+        } else if (getFoodLevel() > 24*7 && canBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Hyenas wake up at the end of the day
@@ -74,6 +72,6 @@ public class Hyena extends Animal
      */
     @Override
     protected boolean canEat(Actor actor){
-        return actor != null && PREY.contains(actor.getClass());
+        return actor instanceof Zebra;
     }
 }

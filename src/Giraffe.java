@@ -9,15 +9,15 @@ public class Giraffe extends Animal
 {
     // Characteristics shared by all Giraffes (class variables).
     // The age at which a Giraffe can start to breed.
-    protected int getBreedingAge() { return 10; }
+    protected int getBreedingAge() { return 24*7; }
     // The age to which a Giraffe can live.
-    protected int getMaxAge() { return 1800; }
+    protected int getMaxAge() { return 24*56; }
     // The likelihood of a Giraffe breeding.
-    protected double getBreedingProbability() { return 0.02; }
+    protected double getBreedingProbability() { return 0.04; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
     // The amount of "food" a giraffe gives when eaten
-    protected int getFoodValue() { return 120; }
+    protected int getFoodValue() { return 24*9; }
 
     /**
      * Create a new Giraffe. A Giraffe may be created with age
@@ -30,7 +30,13 @@ public class Giraffe extends Animal
     {
         super(randomAge, location);
     }
-    
+
+    @Override
+    public void act(Field currentField, Field nextFieldState, Environment env) {
+        decreaseHunger(1); // Food is always available: we can always eat
+        super.act(currentField, nextFieldState, env);
+    }
+
     @Override
     public String toString() {
         return "Giraffe{" +

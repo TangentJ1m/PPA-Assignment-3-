@@ -9,11 +9,11 @@ public class Lion extends Animal
 {
     // Characteristics shared by all Lions (class variables).
     // The age at which a Lion can start to breed.
-    protected int getBreedingAge() { return 15; }
+    protected int getBreedingAge() { return 24*3; }
     // The age to which a Lion can live.
-    protected int getMaxAge() { return 1800; }
+    protected int getMaxAge() { return 24*21; }
     // The likelihood of a Lion breeding.
-    protected double getBreedingProbability() { return 0.02; }
+    protected double getBreedingProbability() { return 0.04; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
     // How much "food" a lion gives when eaten
@@ -61,11 +61,11 @@ public class Lion extends Animal
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (getFoodLevel() < 50) {
+        } else if (getFoodLevel() < 24*2) {
             setState(AnimalState.EATING);
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 200 && canBreed()) {
+        } else if (getFoodLevel() > 24*7 && canBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Lions wake up at the end of the night

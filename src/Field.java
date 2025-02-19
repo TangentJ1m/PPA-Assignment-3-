@@ -98,10 +98,10 @@ public class Field
         if(location != null) {
             int row = location.row();
             int col = location.col();
-            for(int roffset = -1; roffset <= 1; roffset++) {
+            for(int roffset = -range; roffset <= range; roffset++) {
                 int nextRow = row + roffset;
                 if(nextRow >= 0 && nextRow < depth) {
-                    for(int coffset = -1; coffset <= 1; coffset++) {
+                    for(int coffset = -range; coffset <= range; coffset++) {
                         int nextCol = col + coffset;
                         // Exclude invalid locations and the original location.
                         if(nextCol >= 0 && nextCol < width && (roffset != 0 || coffset != 0)) {

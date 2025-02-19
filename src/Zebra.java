@@ -9,15 +9,15 @@ public class Zebra extends Animal
 {
     // Characteristics shared by all Zebras (class variables).
     // The age at which a Zebra can start to breed.
-    protected int getBreedingAge() { return 5; }
+    protected int getBreedingAge() { return 24*6; }
     // The age to which a Zebra can live.
-    protected int getMaxAge() { return 1800; }
+    protected int getMaxAge() { return 24*14; }
     // The likelihood of a Zebra breeding.
-    protected double getBreedingProbability() { return 0.02; }
+    protected double getBreedingProbability() { return 0.05; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 4; }
     // How much "food" a zebra gives when eaten
-    protected int getFoodValue() { return 90; }
+    protected int getFoodValue() { return 24*7; }
 
     /**
      * Create a new Zebra. A Zebra may be created with age
@@ -32,12 +32,18 @@ public class Zebra extends Animal
     }
 
     @Override
+    public void act(Field currentField, Field nextFieldState, Environment env) {
+        decreaseHunger(1); // Food is always available: we can always eat
+        super.act(currentField, nextFieldState, env);
+    }
+
+    @Override
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (canBreed()){
+        } else if (canBreed()) {
             setState(AnimalState.BREEDING);
         }
     }

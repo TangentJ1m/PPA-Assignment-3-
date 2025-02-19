@@ -30,12 +30,11 @@ public abstract class Animal extends Actor {
         super(location);
         this.gender = assignGender();
         age = 0;
-        // FIXME: Set to a reasonable random value
-        // FIXME: Not every animal should have hunger with the current implementation
-        foodLevel = 540;
+        foodLevel = 24 * 7; // Can safely not eat for a week
         state = AnimalState.SLEEPING;
         if(randomAge) {
             age = rand.nextInt(getMaxAge());
+            foodLevel = rand.nextInt(24*7);
         }
     }
     
@@ -108,6 +107,10 @@ public abstract class Animal extends Actor {
         }
     }
 
+    protected void decreaseHunger(int amount) {
+        foodLevel += amount;
+    }
+
     protected int getFoodLevel()
     {
         return foodLevel;
@@ -120,7 +123,7 @@ public abstract class Animal extends Actor {
      */
     protected boolean isPartnerNearby(Field field)
     {
-        return field.findActor(getLocation(), 1, (actor) -> {
+        return field.findActor(getLocation(), 4, (actor) -> {
             if (actor.getClass().equals(this.getClass())) {
                 Animal animal = (Animal) actor;
                 return animal.gender != this.gender && animal.state == AnimalState.BREEDING;
