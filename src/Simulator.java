@@ -85,8 +85,7 @@ public class Simulator
     public void simulate(int numSteps)
     {
         reportStats();
-        // FIXME: field.isViable() does not have a correct implementation
-        for(int n = 1; n <= numSteps && (true || field.isViable()); n++) {
+        for(int n = 1; n <= numSteps && field.isViable(); n++) {
             simulateOneStep();
             delay(50);         // adjust this to change execution speed
         }

@@ -168,28 +168,16 @@ public class Field
     }
 
     /**
-     * Return whether there is at least one Zebra and one Hyena in the field.
-     * @return true if there is at least one Zebra and one Hyena in the field.
+     * Return whether there is at least two different acting species
+     * @return true if there is at least two different acting species
      */
     public boolean isViable()
     {
-        boolean ZebraFound = false;
-        boolean HyenaFound = false;
-        Iterator<Actor> it = actors.iterator();
-        while(it.hasNext() && ! (ZebraFound && HyenaFound)) {
-            Actor anActor = it.next();
-            if(anActor instanceof Zebra Zebra) {
-                if(Zebra.isActive()) {
-                    ZebraFound = true;
-                }
-            }
-            else if(anActor instanceof Hyena Hyena) {
-                if(Hyena.isActive()) {
-                    HyenaFound = true;
-                }
-            }
+        Set<Class<?>> seen = new HashSet<>();
+        for (Actor anActor : actors) {
+            seen.add(anActor.getClass());
         }
-        return ZebraFound && HyenaFound;
+        return seen.size() >= 2;
     }
     
     /**
