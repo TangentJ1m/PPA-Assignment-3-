@@ -13,11 +13,11 @@ public class Giraffe extends Animal
     // The age to which a Giraffe can live.
     protected int getMaxAge() { return 24*56; }
     // The likelihood of a Giraffe breeding.
-    protected double getBreedingProbability() { return 0.04; }
+    protected double getBreedingProbability() { return 0.08; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
     // The amount of "food" a giraffe gives when eaten
-    protected int getFoodValue() { return 24*9; }
+    protected int getFoodValue() { return 24*14; }
 
     /**
      * Create a new Giraffe. A Giraffe may be created with age
@@ -69,6 +69,8 @@ public class Giraffe extends Animal
             setState(AnimalState.SLEEPING);
         } else if (canBreed()) {
             setState(AnimalState.BREEDING);
+        } else {
+            setState(AnimalState.WANDERING);
         }
     }
 }

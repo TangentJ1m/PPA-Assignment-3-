@@ -9,6 +9,9 @@ import java.util.*;
 
 public abstract class Animal extends Actor {
     protected static final double GENDER_PROBABILITY = 0.5;
+    private static final double DISEASE_LETHALITY = 0.2; // The chance a disease kills per step
+    private static final double DISEASE_SPREAD = 0.1; // The chance a disease spreads per step
+    private static final double NEW_DISEASE_CHANCE = 0.00001; // The chance a creature gets a new disease
     protected static final Random rand = Randomizer.getRandom();
     protected abstract int getMaxAge();
     protected abstract int getFoodValue();
@@ -20,6 +23,7 @@ public abstract class Animal extends Actor {
     private int foodLevel;
     private int age;
     private AnimalState state;
+    private boolean diseased;
 
     /**
      * Constructs a new Animal; called by subclasses instead of directly.
@@ -30,11 +34,12 @@ public abstract class Animal extends Actor {
         super(location);
         this.gender = assignGender();
         age = 0;
-        foodLevel = 24 * 7; // Can safely not eat for a week
+        foodLevel = 24 * 14; // Can safely not eat for 2 weeks
         state = AnimalState.SLEEPING;
+        diseased = false;
         if(randomAge) {
             age = rand.nextInt(getMaxAge());
-            foodLevel = rand.nextInt(24*7);
+            foodLevel = rand.nextInt(24*21);
         }
     }
     
@@ -143,6 +148,28 @@ public abstract class Animal extends Actor {
                 (a) -> canEat(a) && a.isActive());
     }
 
+    private void updateDisease(Field currentField) {
+        if (!diseased) {
+            if (rand.nextDouble() < NEW_DISEASE_CHANCE) {
+                diseased = true;
+            }
+        }
+        else {
+            List<Location> adjacent = currentField.getAdjacentLocations(location, 1);
+            for (Location loc : adjacent) {
+                Actor a = currentField.getActorAt(loc);
+                if (a instanceof Animal animal) {
+                    if (rand.nextDouble() < DISEASE_SPREAD) {
+                        animal.diseased = true;
+                    }
+                }
+            }
+            if (rand.nextDouble() < DISEASE_LETHALITY) {
+                setDead();
+            }
+        }
+    }
+
     /**
      * Allows this Animal to act
      * @param currentField The current state of the field.
@@ -154,11 +181,13 @@ public abstract class Animal extends Actor {
     {
         incrementAge();
         incrementHunger();
+        updateDisease(currentField);
         updateState(env);
         switch(state) {
             case SLEEPING -> sleepAction(nextFieldState);
             case BREEDING -> breedAction(currentField, nextFieldState);
             case EATING -> eatAction(currentField, nextFieldState);
+            case WANDERING -> wanderAction(currentField, nextFieldState);
             case DEAD -> setDead();
         }
     }
@@ -231,6 +260,18 @@ public abstract class Animal extends Actor {
         } else {
             setDead();
         }
+    }
+
+    protected void wanderAction(Field currentField, Field nextFieldState) {
+        List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+        if (!freeLocations.isEmpty()) {
+            Location nextLoc = freeLocations.removeFirst();
+            setLocation(nextLoc);
+            nextFieldState.placeActor(this, nextLoc);
+        } else {
+            setDead();
+        }
+
     }
 
     protected boolean canBreed() {

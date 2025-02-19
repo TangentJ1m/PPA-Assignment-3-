@@ -17,8 +17,8 @@ public class Simulator
     private static final int DEFAULT_DEPTH = 80;
     // The probability that each actor will be created in any given grid position.
     private static final double HYENA_CREATION_PROBABILITY = 0.02;
-    private static final double ZEBRA_CREATION_PROBABILITY = 0.05;
-    private static final double GIRAFFE_CREATION_PROBABILITY = 0.04;
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.15;
+    private static final double GIRAFFE_CREATION_PROBABILITY = 0.05;
     private static final double LION_CREATION_PROBABILITY = 0.01;
 
 

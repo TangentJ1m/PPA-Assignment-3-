@@ -13,11 +13,11 @@ public class Zebra extends Animal
     // The age to which a Zebra can live.
     protected int getMaxAge() { return 24*14; }
     // The likelihood of a Zebra breeding.
-    protected double getBreedingProbability() { return 0.05; }
+    protected double getBreedingProbability() { return 0.10; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 4; }
     // How much "food" a zebra gives when eaten
-    protected int getFoodValue() { return 24*7; }
+    protected int getFoodValue() { return 24*14; }
 
     /**
      * Create a new Zebra. A Zebra may be created with age
@@ -45,6 +45,8 @@ public class Zebra extends Animal
             setState(AnimalState.SLEEPING);
         } else if (canBreed()) {
             setState(AnimalState.BREEDING);
+        } else {
+            setState(AnimalState.WANDERING);
         }
     }
 

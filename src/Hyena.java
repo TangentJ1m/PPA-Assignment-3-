@@ -13,9 +13,9 @@ public class Hyena extends Animal
     // The age at which a Hyena can start to breed.
     protected int getBreedingAge() { return 24; }
     // The age to which a Hyena can live.
-    protected int getMaxAge() { return 24*7; }
+    protected int getMaxAge() { return 24*30; }
     // The likelihood of a Hyena breeding.
-    protected double getBreedingProbability() { return 0.05; }
+    protected double getBreedingProbability() { return 0.09; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
     // The amount of "food" a hyena gives when eaten
@@ -41,7 +41,7 @@ public class Hyena extends Animal
             setState(AnimalState.EATING);
         } else if (!env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 24*7 && canBreed()) {
+        } else if (getFoodLevel() > 24*14 && canBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Hyenas wake up at the end of the day
