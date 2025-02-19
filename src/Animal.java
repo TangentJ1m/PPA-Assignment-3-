@@ -12,8 +12,11 @@ public abstract class Animal extends Actor {
     protected static final Random rand = Randomizer.getRandom();
     protected abstract int getMaxAge();
     protected abstract int getFoodValue();
+    protected abstract double getBreedingProbability();
+    protected abstract int getMaxLitterSize();
+    protected abstract int getBreedingAge();
 
-    private Gender gender;
+    private final Gender gender;
     private int foodLevel;
     private int age;
     private AnimalState state;
@@ -51,20 +54,7 @@ public abstract class Animal extends Actor {
     {
         setActive(false);
         location = null;
-    }
-
-    /**
-     * @return true if the Animal is male
-     */
-    protected boolean isMale() {
-        return gender == Gender.MALE;
-    }
-
-    /**
-     * @return true if the Animal is female
-     */
-    protected boolean isFemale() {
-        return gender == Gender.FEMALE;
+        state = AnimalState.DEAD;
     }
 
     /**
@@ -124,21 +114,23 @@ public abstract class Animal extends Actor {
     }
 
     /**
-     * Get if there is a male Animal of the same subtype in an adjacent cell
+     * Find if there is a suitable breeding partner in an adjacent cell
      * @param field the field of animals to check
-     * @return true if there is a male Animal of the same subtype in an adjacent cell
+     * @return true if there is a suitable breeding partner
      */
-    protected boolean isMaleNearby(Field field)
+    protected boolean isPartnerNearby(Field field)
     {
-        return field.findActor(getLocation(), 1,
-                (a) -> a.getClass().equals(this.getClass()) &&
-                        // Cast is safe as we know a is an Animal subtype
-                        ((Animal) a).isMale())
-                != null;
+        return field.findActor(getLocation(), 1, (actor) -> {
+            if (actor.getClass().equals(this.getClass())) {
+                Animal animal = (Animal) actor;
+                return animal.gender != this.gender && animal.state == AnimalState.BREEDING;
+            }
+            return false;
+        }) != null;
     }
 
     /**
-     * Get the location of prey in an adjacent cell
+     * Get the location of food in an adjacent cell
      * @param field the field to check
      * @return the location of suitable prey if there is any, else null
      */
@@ -146,20 +138,6 @@ public abstract class Animal extends Actor {
     {
         return field.findActor(getLocation(), 1,
                 (a) -> canEat(a) && a.isActive());
-    }
-
-    /**
-     * Get the location of a suitable breeding partner (same Animal subtype, opposite gender, in BREEDING state)
-     * @param field the field to check
-     * @return the location of a suitable breeding partner, or null
-     */
-    protected Location findPartner(Field field)
-    {
-        return field.findActor(getLocation(), 1,
-                (a) -> a.getClass().equals(this.getClass()) &&
-                        // Casts are safe as we know a is a subtype of Animal
-                        ((Animal) a).getGender() != this.getGender() &&
-                        ((Animal) a).state == AnimalState.BREEDING);
     }
 
     /**
@@ -204,12 +182,15 @@ public abstract class Animal extends Actor {
 
     protected void breedAction(Field currentField, Field nextFieldState)
     {
-        Location partnerLoc = findPartner(currentField);
         List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
-        if (partnerLoc != null) {
-            // If we found a partner then we can breed
-            if (this.getGender() == Gender.FEMALE) {
-                giveBirth(nextFieldState, freeLocations);
+        if (isPartnerNearby(currentField) && gender == Gender.FEMALE && rand.nextDouble() <= getBreedingProbability()) {
+            // New Animals are born into adjacent locations.
+            // Get a list of adjacent free locations.
+            int births = rand.nextInt(getMaxLitterSize()) + 1;
+            for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
+                Location loc = freeLocations.removeFirst();
+                Animal young = giveBirth(loc);
+                nextFieldState.placeActor(young, loc);
             }
         }
         if (!freeLocations.isEmpty()) {
@@ -217,6 +198,7 @@ public abstract class Animal extends Actor {
             setLocation(nextLoc);
             nextFieldState.placeActor(this, nextLoc);
         } else {
+            // Overcrowding
             setDead();
         }
     }
@@ -248,12 +230,15 @@ public abstract class Animal extends Actor {
         }
     }
 
+    protected boolean canBreed() {
+        return age > getBreedingAge();
+    }
+
     /**
      * Updates the state of the animal
      * @param env The environment of the simulation
      */
     abstract void updateState(Environment env);
-
 
     /**
      * Check if this animal can eat the given actor
@@ -263,10 +248,8 @@ public abstract class Animal extends Actor {
     abstract boolean canEat(Actor actor);
 
     /**
-     * Gives birth to more of the Animal as newborns
-     * @param currentField the current state of the field
-     * @param freeLocations the adjacent free locations we could place the children
+     * Create a newborn version of this animal
+     * @param loc the location for the new animal
      */
-    protected abstract void giveBirth(Field currentField, List<Location> freeLocations);
+    protected abstract Animal giveBirth(Location loc);
 }
-    

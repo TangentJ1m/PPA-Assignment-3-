@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.Random;
-import java.util.Arrays;
 /**
  * A simple model of a Giraffe.
  * Giraffes age, move, breed, and die.
@@ -12,13 +9,13 @@ public class Giraffe extends Animal
 {
     // Characteristics shared by all Giraffes (class variables).
     // The age at which a Giraffe can start to breed.
-    private static final int BREEDING_AGE = 10;
+    protected int getBreedingAge() { return 10; }
     // The age to which a Giraffe can live.
     protected int getMaxAge() { return 1800; }
     // The likelihood of a Giraffe breeding.
-    private static final double BREEDING_PROBABILITY = 0.02;
+    protected double getBreedingProbability() { return 0.02; }
     // The maximum number of births.
-    private static final int MAX_LITTER_SIZE = 2;
+    protected int getMaxLitterSize() { return 2; }
     // The amount of "food" a giraffe gives when eaten
     protected int getFoodValue() { return 120; }
 
@@ -42,50 +39,10 @@ public class Giraffe extends Animal
                 ", location=" + getLocation() +
                 '}';
     }
-    
-    /**
-     * Check whether this Giraffe is to give birth at this step.
-     * New births will be made into free adjacent locations.
-     * @param freeLocations The locations that are free in the current field.
-     */
-    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
-    {
-        // New Giraffes are born into adjacent locations.
-        // Get a list of adjacent free locations.
-        int births = breed();
-        if(births > 0) {
-            for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
-                Location loc = freeLocations.remove(0);
-                Giraffe young = new Giraffe(false, loc);
-                nextFieldState.placeActor(young, loc);
-            }
-        }
-    }
-        
-    /**
-     * Generate a number representing the number of births,
-     * if it can breed.
-     * @return The number of births (may be zero).
-     */
-    private int breed()
-    {
-        int births;
-        if(canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY) {
-            births = rand.nextInt(MAX_LITTER_SIZE) + 1;
-        }
-        else {
-            births = 0;
-        }
-        return births;
-    }
 
-    /**
-     * A Giraffe can breed if it has reached the breeding age.
-     * @return true if the Giraffe can breed, false otherwise.
-     */
-    private boolean canBreed()
+    protected Animal giveBirth(Location loc)
     {
-        return getAge() >= BREEDING_AGE;
+        return new Giraffe(false, loc);
     }
 
     /**
@@ -104,7 +61,7 @@ public class Giraffe extends Animal
             setState(AnimalState.DEAD);
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else {
+        } else if (canBreed()) {
             setState(AnimalState.BREEDING);
         }
     }

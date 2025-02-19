@@ -1,6 +1,4 @@
 import java.util.List;
-import java.util.Iterator;
-import java.util.Random;
 import java.util.Arrays;
 /**
  * A simple model of a Hyena.
@@ -13,13 +11,13 @@ public class Hyena extends Animal
 {
     // Characteristics shared by all Hyenas (class variables).
     // The age at which a Hyena can start to breed.
-    private static final int BREEDING_AGE = 15;
+    protected int getBreedingAge() { return 15; }
     // The age to which a Hyena can live.
     protected int getMaxAge() { return 1800; }
     // The likelihood of a Hyena breeding.
-    private static final double BREEDING_PROBABILITY = 0.01;
+    protected double getBreedingProbability() { return 0.01; }
     // The maximum number of births.
-    private static final int MAX_LITTER_SIZE = 2;
+    protected int getMaxLitterSize() { return 2; }
     // List of preys that a hyena can eat
     private static final List<Class<?>> PREY = Arrays.asList(Zebra.class, Giraffe.class);
     // The amount of "food" a hyena gives when eaten
@@ -45,7 +43,7 @@ public class Hyena extends Animal
             setState(AnimalState.EATING);
         } else if (!env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 200) {
+        } else if (getFoodLevel() > 200 && canBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Hyenas wake up at the end of the day
@@ -64,40 +62,9 @@ public class Hyena extends Animal
                 '}';
     }
 
-    /**
-     * Check whether this Hyena is to give birth at this step.
-     * New births will be made into free adjacent locations.
-     * @param freeLocations The locations that are free in the current field.
-     */
-    protected void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    protected Animal giveBirth(Location loc)
     {
-        // New Hyenas are born into adjacent locations.
-        // Get a list of adjacent free locations.
-        int births = breed();
-        if(births > 0) {
-            for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
-                Location loc = freeLocations.remove(0);
-                Hyena young = new Hyena(false, loc);
-                nextFieldState.placeActor(young, loc);
-            }
-        }
-    }
-        
-    /**
-     * Generate a number representing the number of births,
-     * if it can breed.
-     * @return The number of births (may be zero).
-     */
-    private int breed()
-    {
-        int births;
-        if(rand.nextDouble() <= BREEDING_PROBABILITY) {
-            births = rand.nextInt(MAX_LITTER_SIZE) + 1;
-        }
-        else {
-            births = 0;
-        }
-        return births;
+        return new Hyena(false, loc);
     }
     
     /**
