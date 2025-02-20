@@ -63,9 +63,9 @@ public class Giraffe extends Animal implements Edible
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (env.isNight()) {
+        } else if (shouldSleep(env)) {
             setState(AnimalState.SLEEPING);
-        } else if (canBreed()) {
+        } else if (shouldBreed(env)) {
             setState(AnimalState.EAT_AND_BREED);
         } else {
             setState(AnimalState.EATING);
@@ -74,5 +74,25 @@ public class Giraffe extends Animal implements Edible
 
     public void eat() {
         setDead();
+    }
+    
+    /**
+     * Giraffe's only sleep for 30 minutes a day which is replicated here
+     * @return true if the giraffe should sleep
+     */
+    private boolean shouldSleep(Environment env){
+        int hour = env.getTime() % 24;
+        return (hour >= 20 && hour <= 21);
+    }
+    
+    /**
+     * Determine's where a giraffe should breed if it's of age and 
+     * not raining or stormy
+     * @return true if giraffe should breed
+     */
+    private boolean shouldBreed(Environment env){
+        Weather weather = env.getWeather();
+        return (canBreed() && 
+        (weather != Weather.RAINY || weather != Weather.STORMY));
     }
 }

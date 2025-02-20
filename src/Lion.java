@@ -85,11 +85,11 @@ public class Lion extends Animal
      * @return true if should eat
      */
     private boolean shouldBreed(){
-        return getFoodLevel() < 24 * 2 && canBreed();
+        return getFoodLevel() > 24 * 2 && canBreed();
     }
     
     /**
-     * Hunts more in foggy or cloudy less so in heavy rain
+     * Hunts more in foggy or cloudy unless in heavy rain
      * @return true if should hunt
      */
     private boolean shouldHunt(Environment env){

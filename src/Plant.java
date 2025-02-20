@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Plant extends Actor implements Edible {
     private static final double SPREAD_CHANCE = 0.01;
-    private static final double SPREAD_CHANCE_RAINING = 0.06;
+    private static final double SPREAD_CHANCE_RAINING = 0.02;
     private static final Random RANDOM = new Random();
 
     public Plant(Location location) {
@@ -15,6 +15,7 @@ public class Plant extends Actor implements Edible {
         if (env.getWeather() == Weather.RAINY || env.getWeather() == Weather.STORMY) {
             spreadChance = SPREAD_CHANCE_RAINING;
         }
+        
         if (RANDOM.nextDouble() < spreadChance) {
             for (Location loc : nextFieldState.getFreeOrPlant(getLocation(), 1)) {
                 Plant newPlant = new Plant(loc);

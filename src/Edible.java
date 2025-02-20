@@ -1,9 +1,9 @@
 /**
  * Interface for edible actors (prey and plants)
- * @author Keiran Matthews
- * @version 1.0.0
+ * @author Keiran Matthews & Tanjim Islam
+ * @version 1.0.0 
  */
 public interface Edible {
-    void eat();
+    void eat(); 
     int getFoodValue();
 }

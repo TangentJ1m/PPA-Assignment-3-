@@ -42,13 +42,23 @@ public class Zebra extends Animal implements Edible
             setState(AnimalState.DEAD);
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
-        } else if (canBreed()) {
+        } else if (shouldBreed(env)) {
             setState(AnimalState.EAT_AND_BREED);
         } else {
             setState(AnimalState.EATING);
         }
     }
-
+    
+    /**
+     * Determines whether the zebra can be breeding if weather is right
+     * 
+     */
+    private boolean shouldBreed(Environment env){
+        return getFoodLevel() > 10 && 
+        canBreed() && env.getWeather() != Weather.STORMY;
+    }
+    
+    
     @Override
     public String toString() {
         return "Zebra{" +

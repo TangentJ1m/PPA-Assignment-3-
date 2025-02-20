@@ -1,6 +1,6 @@
 import java.util.*;
 import java.util.function.Function;
-
+ 
 /**
  * A simple predator-prey simulator, based on a rectangular field containing 
  * Hyenas, Zebras, Giraffes, Hunters and Lions.
@@ -20,7 +20,7 @@ public class Simulator
     private static final double ZEBRA_CREATION_PROBABILITY = 0.15;
     private static final double GIRAFFE_CREATION_PROBABILITY = 0.05;
     private static final double LION_CREATION_PROBABILITY = 0.02;
-    private static final double PLANT_CREATION_PROBABILITY = 0.02;
+    private static final double PLANT_CREATION_PROBABILITY = 0.15;
 
 
     // The current state of the field.
@@ -74,7 +74,7 @@ public class Simulator
      */
     public void runLongSimulation()
     {
-        simulate(1200);
+        simulate(120);
     }
     
     /**

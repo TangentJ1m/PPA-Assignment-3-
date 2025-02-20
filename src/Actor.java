@@ -1,53 +1,59 @@
-
 /**
- * the interface to be extended by any class wishing
- * to participate in the simulation
+ * The interface to be extended by any class wishing to participate in the simulation.
+ * Represents an entity that exists in the environment and can take actions.
  *
- * @author Tanjim Islam
+ * @author Tanjim Islam & Keiran Matthews
  * @version 1.0.0
  */
-public abstract class Actor
-{
-    private boolean active;
-    protected Location location;
+public abstract class Actor {
+    private boolean active; // Indicates if the actor is still active
+    protected Location location; // Current location of the actor in the simulation
 
     /**
-     * Constructor for a new Actor, sets the new actor to be active by default
-     * @param location the location to create the actor
+     * Constructor for a new Actor.
+     * The actor is set to be active by default.
+     *
+     * @param location The initial location of the actor.
      */
     public Actor(Location location) {
         this.active = true;
         this.location = location;
     }
-    
+
     /**
-     * @param currentField The current state of the field.
-     * @param nextFieldState The new state being built.
+     * Defines the behavior of the actor in the simulation.
+     * Must be implemented by subclasses.
+     *
+     * @param currentField    The current state of the field.
+     * @param nextFieldState  The new state being built for the next simulation step.
+     * @param env             The environment containing weather and time information.
      */
     public abstract void act(Field currentField, Field nextFieldState, Environment env);
-    
+
     /**
-     * @return true if the Actor is still active
+     * Checks if the actor is still active in the simulation.
+     *
+     * @return true if the actor is active, false otherwise.
      */
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return active;
     }
-    
+
     /**
-     * @return The Actor's location
+     * Gets the current location of the actor.
+     *
+     * @return The actor's location.
      */
-    public Location getLocation()
-    {
-        return location; 
+    public Location getLocation() {
+        return location;
     }
-    
+
     /**
-     * Set the Actor's location
-     * @param location The new location
+     * Updates the actor's location.
+     *
+     * @param location The new location to set.
      */
-    protected void setLocation(Location location)
-    {
+    protected void setLocation(Location location) {
         if (location == null) {
             System.out.println("TRIED TO SET LOCATION TO NULL!!!!!");
         }
@@ -55,8 +61,9 @@ public abstract class Actor
     }
 
     /**
-     * Set whether this Actor is active
-     * @param active the new value for active
+     * Sets whether the actor is active in the simulation.
+     *
+     * @param active The new active state of the actor.
      */
     protected void setActive(boolean active) {
         this.active = active;

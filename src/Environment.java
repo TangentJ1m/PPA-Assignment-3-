@@ -22,7 +22,11 @@ public class Environment {
         int hour = time % 24;
         return hour < 6 || hour >= 18; // Before 6am or after 6pm
     }
-
+    
+    public boolean isDay(){
+        return !this.isNight();
+    }
+    
     public String getEnvString() {
         return String.format("Day: %s Hour: %s Weather: %s", time / 24, time % 24, weather );
     }
@@ -50,5 +54,9 @@ public class Environment {
 
     public Weather getWeather(){
         return weather;
+    }
+    
+    public int getTime(){
+        return time;
     }
 }

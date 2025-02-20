@@ -15,7 +15,7 @@ public class Hyena extends Animal
     // The age to which a Hyena can live.
     protected int getMaxAge() { return 24*30; }
     // The likelihood of a Hyena breeding.
-    protected double getBreedingProbability() { return 0.09; }
+    protected double getBreedingProbability() { return 0.06; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
 
@@ -35,19 +35,29 @@ public class Hyena extends Animal
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (getFoodLevel() < 24*2) {
+        } else if (shouldHunt(env)) {
             setState(AnimalState.EATING);
-        } else if (!env.isNight()) {
+        } else if (shouldSleep(env)) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 24*14 && canBreed()) {
+        } else if (shouldBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Hyenas wake up at the end of the day
-        if (env.isNight() && getState() == AnimalState.SLEEPING) {
+        if (shouldWakeUp(env)) {
             setState(AnimalState.EATING);
         }
     }
 
+    /**
+     * Hunts more in foggy or cloudy unless in heavy rain
+     * @return true if should hunt
+     */
+    private boolean shouldHunt(Environment env){
+        Weather weather = env.getWeather();
+        return (weather == Weather.FOGGY || weather == Weather.CLOUDY) &&
+                weather != Weather.CLOUDY && weather != Weather.RAINY;
+    }
+    
     @Override
     public String toString() {
         return "Hyena{" +
@@ -71,5 +81,31 @@ public class Hyena extends Animal
     @Override
     protected boolean canEat(Actor actor){
         return actor instanceof Zebra;
+    }
+    
+    /**
+     * Wakes up when night ends unless it's bad weather
+     * @return true if should wake up 
+     */
+    private boolean shouldWakeUp(Environment env){
+        return !env.isNight() && getState() == AnimalState.SLEEPING && 
+           env.getWeather() != Weather.RAINY &&
+           env.getWeather() != Weather.STORMY;
+    }
+    
+    /**
+     * Breeds if full and conditions are good
+     * @return true if should eat
+     */
+    private boolean shouldBreed(){
+        return getFoodLevel() > 24 && canBreed();
+    }
+    
+    /**
+     * Sleep if it's night or raining
+     * @return true is should sleep 
+     */
+    private boolean shouldSleep(Environment env){
+        return env.isDay() || env.getWeather() == Weather.RAINY;
     }
 }

@@ -142,7 +142,15 @@ public abstract class Animal extends Actor {
         return field.findActor(getLocation(), 1,
                 (a) -> canEat(a) && a.isActive());
     }
-
+    
+        /**
+     * Updates the disease status of the animal.
+     * - Introduces disease randomly based on NEW_DISEASE_CHANCE.
+     * - Spreads disease to nearby animals based on DISEASE_SPREAD probability.
+     * - Can cause death based on DISEASE_LETHALITY.
+     *
+     * @param currentField The current state of the field.
+     */
     private void updateDisease(Field currentField) {
         if (!diseased) {
             if (rand.nextDouble() < NEW_DISEASE_CHANCE) {
@@ -188,6 +196,15 @@ public abstract class Animal extends Actor {
         }
     }
 
+    /**
+     * Performs both eating and breeding actions if conditions allow.
+     * - Breeds if a partner is nearby and the probability is met.
+     * - Eats if food is available.
+     * - Moves to a new location or dies if no valid moves exist.
+     *
+     * @param currentField The current state of the field.
+     * @param nextFieldState The new state being built.
+     */
     protected void eatAndBreed(Field currentField, Field nextFieldState) {
         List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
         if (isPartnerNearby(currentField) && gender == Gender.FEMALE && rand.nextDouble() <= getBreedingProbability()) {
@@ -222,7 +239,14 @@ public abstract class Animal extends Actor {
         }
 
     }
-
+    
+    /**
+     * Handles the sleep action for the animal.
+     * - If another animal enters its location, it attempts to move.
+     * - If no free space is available, it dies due to overcrowding.
+     *
+     * @param nextFieldState The new state being built.
+     */
     protected void sleepAction(Field nextFieldState)
     {
         // We are sleeping, so we don't do anything
@@ -242,7 +266,16 @@ public abstract class Animal extends Actor {
         }
         nextFieldState.placeActor(this, nextLocation);
     }
-
+    
+    /**
+     * Handles the breeding action for the animal.
+     * - Checks for a partner nearby.
+     * - If conditions allow, new animals are born.
+     * - Moves to a new location or dies if overcrowded.
+     *
+     * @param currentField The current state of the field.
+     * @param nextFieldState The new state being built.
+     */
     protected void breedAction(Field currentField, Field nextFieldState)
     {
         List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
@@ -291,7 +324,15 @@ public abstract class Animal extends Actor {
             setDead();
         }
     }
-
+    
+        /**
+     * Handles the wandering behavior of the animal.
+     * - Moves randomly to a free adjacent location.
+     * - Dies if no free locations are available.
+     *
+     * @param currentField The current state of the field.
+     * @param nextFieldState The new state being built.
+     */
     protected void wanderAction(Field currentField, Field nextFieldState) {
         List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
         if (!freeLocations.isEmpty()) {
