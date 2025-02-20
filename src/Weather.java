@@ -11,7 +11,7 @@ public enum Weather
 
     private final String name;
 
-    Weather(final String name) {
+    Weather(String name) {
         this.name = name;
     }
 
