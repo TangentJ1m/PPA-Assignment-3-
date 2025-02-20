@@ -61,16 +61,52 @@ public class Lion extends Animal
     protected void updateState(Environment env) {
         if (!isActive()) {
             setState(AnimalState.DEAD);
-        } else if (getFoodLevel() < 24*2) {
+        } else if (shouldHunt(env)) {
             setState(AnimalState.EATING);
-        } else if (env.isNight()) {
+        } else if (shouldSleep(env)) {
             setState(AnimalState.SLEEPING);
-        } else if (getFoodLevel() > 24*14 && canBreed()) {
+        } else if (shouldBreed()) {
             setState(AnimalState.BREEDING);
         }
         // Special case: Lions wake up at the end of the night
-        if (!env.isNight() && getState() == AnimalState.SLEEPING) {
+        if (shouldWakeUp(env)){
             setState(AnimalState.EATING);
         }
+    }
+    
+    /**
+     * Sleep if it's night or raining
+     * @return true is should sleep 
+     */
+    private boolean shouldSleep(Environment env){
+        return env.isNight() || env.getWeatherCondition().equals("RAINY");
+    }
+    
+    /**
+     * Breed if full and conditions are good 
+     * @return true if should eat
+     */
+    private boolean shouldBreed(){
+        return getFoodLevel() < 24 * 2 && canBreed();
+    }
+    
+    /**
+     * Hunts more in foggy or cloudy less so in heavy rain
+     * @return true if should hunt
+     */
+    private boolean shouldHunt(Environment env){
+        String weather = env.getWeatherCondition();
+        return (weather.equals("FOGGY") || weather.equals("CLOUDY")) &&
+                !weather.equals("STORMY") && !weather.equals("RAINY");
+    }
+    
+    /**
+     * Wakes up when night ends unless it's bad weathr
+     * @return true if should wake up 
+     */
+    private boolean shouldWakeUp(Environment env){
+        return !env.isNight() && getState() == AnimalState.SLEEPING && 
+           !env.getWeatherCondition().equals("RAINY") && 
+           !env.getWeatherCondition().equals("STORMY");
     }
 }

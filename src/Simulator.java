@@ -16,10 +16,11 @@ public class Simulator
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
     // The probability that each actor will be created in any given grid position.
-    private static final double HYENA_CREATION_PROBABILITY = 0.02;
+    private static final double HYENA_CREATION_PROBABILITY = 0.03;
     private static final double ZEBRA_CREATION_PROBABILITY = 0.15;
     private static final double GIRAFFE_CREATION_PROBABILITY = 0.05;
-    private static final double LION_CREATION_PROBABILITY = 0.01;
+    private static final double LION_CREATION_PROBABILITY = 0.02;
+    private static final double HUNTER_CREATION_PROBABILITY = 0.01;
 
 
     // The current state of the field.
@@ -130,7 +131,7 @@ public class Simulator
     */
    private void populate() {
         Random rand = Randomizer.getRandom();
-        field.clear();
+        field.clear();  
 
         for (int row = 0; row < field.getDepth(); row++) {
             for (int col = 0; col < field.getWidth(); col++) {

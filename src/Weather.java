@@ -18,6 +18,7 @@ public class Weather
     public Weather()
     {
         rand = new Random();
+        currentCondition = Condition.values()[rand.nextInt(Condition.values().length)];
     }
     
     /**

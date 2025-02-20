@@ -2,7 +2,7 @@ import java.util.*;
 /**
  * Common elements of animals 
  *
- * @author Tanjim Islam
+ * @author Tanjim Islam and Keiran Matthews
  * @version 7.0
  */
 
