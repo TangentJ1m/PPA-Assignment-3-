@@ -77,7 +77,7 @@ public class Lion extends Animal
      * @return true is should sleep 
      */
     private boolean shouldSleep(Environment env){
-        return env.isNight() || env.getWeatherCondition().equals("RAINY");
+        return env.isNight() || env.getWeather() == Weather.RAINY;
     }
     
     /**
@@ -93,18 +93,18 @@ public class Lion extends Animal
      * @return true if should hunt
      */
     private boolean shouldHunt(Environment env){
-        String weather = env.getWeatherCondition();
-        return (weather.equals("FOGGY") || weather.equals("CLOUDY")) &&
-                !weather.equals("STORMY") && !weather.equals("RAINY");
+        Weather weather = env.getWeather();
+        return (weather == Weather.FOGGY || weather == Weather.CLOUDY) &&
+                weather != Weather.CLOUDY && weather != Weather.RAINY;
     }
     
     /**
-     * Wakes up when night ends unless it's bad weathr
+     * Wakes up when night ends unless it's bad weather
      * @return true if should wake up 
      */
     private boolean shouldWakeUp(Environment env){
         return !env.isNight() && getState() == AnimalState.SLEEPING && 
-           !env.getWeatherCondition().equals("RAINY") && 
-           !env.getWeatherCondition().equals("STORMY");
+           env.getWeather() != Weather.RAINY &&
+           env.getWeather() != Weather.STORMY;
     }
 }

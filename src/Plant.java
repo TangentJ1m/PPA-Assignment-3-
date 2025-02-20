@@ -12,8 +12,7 @@ public class Plant extends Actor implements Edible {
     @Override
     public void act(Field currentField, Field nextFieldState, Environment env) {
         double spreadChance = SPREAD_CHANCE;
-        // FIXME: Why does this give a string instead of an enum value??
-        if (env.getWeatherCondition().equals("RAINY") || env.getWeatherCondition().equals("STORMY")) {
+        if (env.getWeather() == Weather.RAINY || env.getWeather() == Weather.STORMY) {
             spreadChance = SPREAD_CHANCE_RAINING;
         }
         if (RANDOM.nextDouble() < spreadChance) {
