@@ -1,9 +1,9 @@
 import java.util.Random;
 /**
- * A class used to support the environment class in determining whether 
+ * A class used to support the environment class in determining weather
  *
- * @Tanjim & Keiran Matthews
- * @1.0.0
+ * @author Tanjim Islam
+ * @version 1.0.0
  */
 public class Weather
 {
@@ -25,14 +25,14 @@ public class Weather
      * Calls the current condition to be changed with a 20% probability
      */
     public void updateWeather(int hour){
-        if (rand.nextDouble() < 0.2){
+        if (rand.nextDouble() < WEATHER_CHANCE){
             currentCondition = getNewCondition(hour);
         }
     }
     
     /**
      * 
-     * Adjust's weather based on previous weather condition's
+     * Adjusts weather based on previous weather condition's
      * @return condition of new current weather
      */
     private Condition getNewCondition(int hour){

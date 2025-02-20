@@ -16,8 +16,6 @@ public class Lion extends Animal
     protected double getBreedingProbability() { return 0.08; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
-    // How much "food" a lion gives when eaten
-    protected int getFoodValue() { return -1; } // Shouldn't be eaten
 
     /**
      * Create a Lion. A Lion can be created as a newborn (age zero

@@ -14,7 +14,6 @@ public abstract class Animal extends Actor {
     private static final double NEW_DISEASE_CHANCE = 0.00001; // The chance a creature gets a new disease
     protected static final Random rand = Randomizer.getRandom();
     protected abstract int getMaxAge();
-    protected abstract int getFoodValue();
     protected abstract double getBreedingProbability();
     protected abstract int getMaxLitterSize();
     protected abstract int getBreedingAge();
@@ -112,10 +111,6 @@ public abstract class Animal extends Actor {
         }
     }
 
-    protected void decreaseHunger(int amount) {
-        foodLevel += amount;
-    }
-
     protected int getFoodLevel()
     {
         return foodLevel;
@@ -188,8 +183,44 @@ public abstract class Animal extends Actor {
             case BREEDING -> breedAction(currentField, nextFieldState);
             case EATING -> eatAction(currentField, nextFieldState);
             case WANDERING -> wanderAction(currentField, nextFieldState);
+            case EAT_AND_BREED -> eatAndBreed(currentField, nextFieldState);
             case DEAD -> setDead();
         }
+    }
+
+    protected void eatAndBreed(Field currentField, Field nextFieldState) {
+        List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
+        if (isPartnerNearby(currentField) && gender == Gender.FEMALE && rand.nextDouble() <= getBreedingProbability()) {
+            // New Animals are born into adjacent locations.
+            // Get a list of adjacent free locations.
+            int births = rand.nextInt(getMaxLitterSize()) + 1;
+            for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
+                Location loc = freeLocations.removeFirst();
+                Animal young = giveBirth(loc);
+                nextFieldState.placeActor(young, loc);
+            }
+        }
+        // We want to eat, so we need to look for food
+        Location foodLoc = findFood(currentField);
+
+        Location nextLoc = null;
+        Actor actor = currentField.getActorAt(foodLoc);
+        if (!(actor instanceof Edible food)) {
+            if (!freeLocations.isEmpty()) {
+                nextLoc = freeLocations.removeFirst();
+            }
+        } else {
+            food.eat();
+            foodLevel = food.getFoodValue();
+            nextLoc = foodLoc;
+        }
+        if (nextLoc != null) {
+            setLocation(nextLoc);
+            nextFieldState.placeActor(this, nextLoc);
+        } else {
+            setDead();
+        }
+
     }
 
     protected void sleepAction(Field nextFieldState)
@@ -199,7 +230,7 @@ public abstract class Animal extends Actor {
         if (nextFieldState.getActorAt(location) != null) {
             // Someone has entered our square so we try to move (otherwise we effectively kill them)
             // Maybe we are pushed by the other animal out of our square
-            List<Location> possibleLocs = nextFieldState.getFreeAdjacentLocations(location);
+            List<Location> possibleLocs = nextFieldState.getFreeOrPlant(location, 1);
             if (!possibleLocs.isEmpty()) {
                 nextLocation = possibleLocs.getFirst();
             }
@@ -214,7 +245,7 @@ public abstract class Animal extends Actor {
 
     protected void breedAction(Field currentField, Field nextFieldState)
     {
-        List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+        List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
         if (isPartnerNearby(currentField) && gender == Gender.FEMALE && rand.nextDouble() <= getBreedingProbability()) {
             // New Animals are born into adjacent locations.
             // Get a list of adjacent free locations.
@@ -241,16 +272,15 @@ public abstract class Animal extends Actor {
         Location foodLoc = findFood(currentField);
 
         Location nextLoc = null;
-        if (foodLoc == null) {
+        Actor actor = currentField.getActorAt(foodLoc);
+        if (!(actor instanceof Edible food)) {
             // FIXME: generate a random adjacent location without constructing the list of all adjacencies
-            List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+            List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
             if (!freeLocations.isEmpty()) {
                 nextLoc = freeLocations.removeFirst();
             }
         } else {
-            // FIXME: What if the food isn't an Animal (maybe a Plant?)
-            Animal food = (Animal) currentField.getActorAt(foodLoc);
-            food.setDead();
+            food.eat();
             foodLevel = food.getFoodValue();
             nextLoc = foodLoc;
         }
@@ -263,7 +293,7 @@ public abstract class Animal extends Actor {
     }
 
     protected void wanderAction(Field currentField, Field nextFieldState) {
-        List<Location> freeLocations = nextFieldState.getFreeAdjacentLocations(location);
+        List<Location> freeLocations = nextFieldState.getFreeOrPlant(location, 1);
         if (!freeLocations.isEmpty()) {
             Location nextLoc = freeLocations.removeFirst();
             setLocation(nextLoc);

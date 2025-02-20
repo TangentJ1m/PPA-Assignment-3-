@@ -1,4 +1,3 @@
-// TODO: Add Weather class + param
 // Can't we add weather dynamics to the environment class?
 public class Environment {
     private int time; // Time in hours from start of simulation
@@ -20,7 +19,7 @@ public class Environment {
     }
 
     public String getEnvString() {
-        return String.format("Day: %s Hour: %s", time / 24, time % 24);
+        return String.format("Day: %s Hour: %s Weather: %s", time / 24, time % 24, weather.getCondition() );
     }
     
     public String getWeatherCondition(){

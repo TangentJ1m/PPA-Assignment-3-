@@ -18,8 +18,6 @@ public class Hyena extends Animal
     protected double getBreedingProbability() { return 0.09; }
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
-    // The amount of "food" a hyena gives when eaten
-    protected int getFoodValue() { return -1; } // Shouldn't be eaten
 
     /**
      * Create a Hyena. A Hyena can be created as a newborn (age zero

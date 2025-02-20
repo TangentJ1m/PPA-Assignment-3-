@@ -44,6 +44,7 @@ public class SimulatorView extends JFrame
         setColor(Hyena.class, Color.blue);
         setColor(Giraffe.class, Color.red);
         setColor(Lion.class, Color.black);
+        setColor(Plant.class, Color.green);
 
         setTitle("Savannah Simulation");
         // the gui doesn't like if it there's no text by default

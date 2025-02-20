@@ -20,7 +20,7 @@ public class Simulator
     private static final double ZEBRA_CREATION_PROBABILITY = 0.15;
     private static final double GIRAFFE_CREATION_PROBABILITY = 0.05;
     private static final double LION_CREATION_PROBABILITY = 0.02;
-    private static final double HUNTER_CREATION_PROBABILITY = 0.01;
+    private static final double PLANT_CREATION_PROBABILITY = 0.02;
 
 
     // The current state of the field.
@@ -148,6 +148,9 @@ public class Simulator
                 }
                 else if (rand.nextDouble() < LION_CREATION_PROBABILITY) {
                     actor = new Lion(true, location);
+                }
+                else if (rand.nextDouble() < PLANT_CREATION_PROBABILITY) {
+                    actor = new Plant(location);
                 }
                 if (actor != null) {
                     field.placeActor(actor, location);

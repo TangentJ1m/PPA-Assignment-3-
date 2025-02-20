@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Represent a rectangular grid of field positions.
@@ -64,23 +65,17 @@ public class Field
 
     /**
      * Get a shuffled list of the free adjacent locations.
+     *
      * @param location Get locations adjacent to this.
+     * @param range How far away to look
      * @return A list of free adjacent locations.
      */
-    public List<Location> getFreeAdjacentLocations(Location location)
+    public List<Location> getFreeOrPlant(Location location, int range)
     {
-        List<Location> free = new LinkedList<>();
-        List<Location> adjacent = getAdjacentLocations(location, 1);
-        for(Location next : adjacent) {
-            Actor anActor = field.get(next);
-            if(anActor == null) {
-                free.add(next);
-            }
-            else if(!anActor.isActive()) {
-                free.add(next);
-            }
-        }
-        return free;
+        return getAdjacentLocations(location, range).stream().filter((loc) -> {
+            Actor actor = getActorAt(loc);
+            return actor == null || !actor.isActive() || actor instanceof Plant;
+        }).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

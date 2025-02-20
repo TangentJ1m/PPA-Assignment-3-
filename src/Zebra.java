@@ -5,7 +5,7 @@
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Zebra extends Animal
+public class Zebra extends Animal implements Edible
 {
     // Characteristics shared by all Zebras (class variables).
     // The age at which a Zebra can start to breed.
@@ -17,7 +17,7 @@ public class Zebra extends Animal
     // The maximum number of births.
     protected int getMaxLitterSize() { return 4; }
     // How much "food" a zebra gives when eaten
-    protected int getFoodValue() { return 24*14; }
+    public int getFoodValue() { return 24*14; }
 
     /**
      * Create a new Zebra. A Zebra may be created with age
@@ -33,7 +33,6 @@ public class Zebra extends Animal
 
     @Override
     public void act(Field currentField, Field nextFieldState, Environment env) {
-        decreaseHunger(1); // Food is always available: we can always eat
         super.act(currentField, nextFieldState, env);
     }
 
@@ -44,9 +43,9 @@ public class Zebra extends Animal
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
         } else if (canBreed()) {
-            setState(AnimalState.BREEDING);
+            setState(AnimalState.EAT_AND_BREED);
         } else {
-            setState(AnimalState.WANDERING);
+            setState(AnimalState.EATING);
         }
     }
 
@@ -72,7 +71,10 @@ public class Zebra extends Animal
     @Override
     protected boolean canEat(Actor actor)
     {
-        // Doesn't eat anything (yet)
-        return false;
+        return actor instanceof Plant;
+    }
+
+    public void eat() {
+        setDead();
     }
 }

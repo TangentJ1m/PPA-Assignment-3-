@@ -5,7 +5,7 @@
  * @author Tanjim & Keiran
  * @version 1.0.0
  */
-public class Giraffe extends Animal
+public class Giraffe extends Animal implements Edible
 {
     // Characteristics shared by all Giraffes (class variables).
     // The age at which a Giraffe can start to breed.
@@ -17,7 +17,7 @@ public class Giraffe extends Animal
     // The maximum number of births.
     protected int getMaxLitterSize() { return 2; }
     // The amount of "food" a giraffe gives when eaten
-    protected int getFoodValue() { return 24*14; }
+    public int getFoodValue() { return 24*14; }
 
     /**
      * Create a new Giraffe. A Giraffe may be created with age
@@ -33,7 +33,6 @@ public class Giraffe extends Animal
 
     @Override
     public void act(Field currentField, Field nextFieldState, Environment env) {
-        decreaseHunger(1); // Food is always available: we can always eat
         super.act(currentField, nextFieldState, env);
     }
 
@@ -58,8 +57,7 @@ public class Giraffe extends Animal
      */
     @Override
     protected boolean canEat(Actor actor) {
-        // Doesn't eat anything (yet)
-        return false;
+        return actor instanceof Plant;
     }
 
     protected void updateState(Environment env) {
@@ -68,9 +66,13 @@ public class Giraffe extends Animal
         } else if (env.isNight()) {
             setState(AnimalState.SLEEPING);
         } else if (canBreed()) {
-            setState(AnimalState.BREEDING);
+            setState(AnimalState.EAT_AND_BREED);
         } else {
-            setState(AnimalState.WANDERING);
+            setState(AnimalState.EATING);
         }
+    }
+
+    public void eat() {
+        setDead();
     }
 }
